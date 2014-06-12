@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Company: Blue Acorn
+ * Developer: Ron Sherman
+ * Version: 0.1.0
+ * @todo Description:
+ */
+-->
+<config>
+    <modules>
+        <BlueAcorn_UniversalAnalytics>
+            <active>true</active>
+            <codePool>community</codePool>
+        </BlueAcorn_UniversalAnalytics>
+    </modules>
+</config>

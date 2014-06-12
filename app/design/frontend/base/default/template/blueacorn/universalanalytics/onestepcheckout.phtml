@@ -1,0 +1,14 @@
+<?php $_helper = Mage::helper('baua') ?>
+<?php if($_helper->isActive()): ?>
+<script type="text/javascript">
+    /**
+     * This overrides the checkout.gotoSection to perform the ga push.
+     * @type {gotoSection}
+     */
+    checkout.gotoSectionparent = checkout.gotoSection;
+    checkout.gotoSection = function(section) {
+        this.gotoSectionparent(section);
+        ga('ec:setAction','checkout', {'step': this.steps.indexOf(section), 'label': section });
+    };
+</script>
+<?php endif ?>
