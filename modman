@@ -1,0 +1,4 @@
+code					app/code/community/BlueAcorn/UniversalAnalytics/
+frontend/layout/*			app/design/frontend/base/default/layout/
+frontend/template/*			app/design/frontend/base/default/template/
+BlueAcorn_UniversalAnalytics.xml	app/etc/modules/BlueAcorn_UniversalAnalytics.xml
