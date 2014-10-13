@@ -12,7 +12,7 @@
 -->
 <layout version="0.1.0">
     <default>
-        <reference name="after_body_start">
+        <reference name="head" before="-">
             <block type="core/text_list" name="universalanalytics" as="universalanalytics" after="-">
                 <block type="universalanalytics/customVariables" name="universalanalytics_customer_type"
                        as="universalanalytics_customer_type"
