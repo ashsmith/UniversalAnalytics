@@ -70,6 +70,17 @@
                 <enabled>0</enabled>
             </settings>
             <translation>
+		<addImpression>
+		    <id>entity_id</id>
+		    <name>name</name>
+		    <!-- list -->
+                    <brand>manufacturer</brand>
+                    <category>entity_type_id</category>
+		    <variant>color</variant>
+		    <!-- position -->
+		    <price>price</price>
+		</addImpression>
+
                 <addproduct>
                     <entity_id>id</entity_id>
                     <sku>sku</sku>
