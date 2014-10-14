@@ -2,6 +2,15 @@
 
 class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observer {
 
+
+    public function viewProduct($observer) {
+        $product = $observer->getProduct();
+
+        $monitor = Mage::getSingleton('baua/monitor');
+
+        $monitor->addProductImpression($product);
+    }
+
     /**
      * Observer that builds add product payload
      * @param $observer

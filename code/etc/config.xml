@@ -53,6 +53,15 @@
                     </baua>
                 </observers>
             </checkout_submit_all_after>
+	    <catalog_product_load_after>
+		<observers>
+		    <baua>
+			<type>model</type>
+			<class>baua/observer</class>
+			<method>viewProduct</method>
+		    </baua>
+		</observers>
+	    </catalog_product_load_after>
         </events>
     </frontend>
     <default>
