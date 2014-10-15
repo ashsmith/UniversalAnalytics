@@ -17,18 +17,18 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         $data = Array();
 
-        foreach ($trans as $googleAttr => $ba) {
-            $data[$googleAttr] = $this->findAttributeValue($product, $ba);
+        foreach ($trans as $googleAttr => $magentoAttr) {
+            $data[$googleAttr] = $this->findAttributeValue($product, $magentoAttr);
         }
 
         $productImpressionList[] = $data;
     }
 
-    protected function findAttributeValue($product, $set) {
+    protected function findAttributeValue($product, $attribute) {
         $newValue = null;
 
         foreach (Array('getListAttributeValue', 'getNormalAttributeValue') as $method) {
-            $newValue = $this->$method($product, $set);
+            $newValue = $this->$method($product, $attribute);
             if ($newValue !== null) break;
         }
 
@@ -55,7 +55,6 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     protected function parseCategoryValue($objectCollection) {
-
         $objectCollection->addAttributeToSelect('name');
         $object = $objectCollection->getFirstItem();
         $names = Array();
@@ -69,7 +68,6 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     protected function getAttributeValueFromList($attributeCode) {
-
         $attributeDetails = Mage::getSingleton("eav/config")->getAttribute("catalog_product", $attributeCode); 
         $options = $attributeDetails->getSource()->getAllOptions(false);
 
