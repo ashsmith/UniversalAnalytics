@@ -45,7 +45,26 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     protected function getNormalAttributeValue($product, $name) {
         $method = 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $name)));
         $value = $product->$method();
+
+        if (is_a($value, 'Mage_Catalog_Model_Resource_Category_Collection')) {
+            $value = $this->parseCategoryValue($value);
+        }
+
         return $value;
+    }
+
+    protected function parseCategoryValue($objectCollection) {
+
+        $objectCollection->addAttributeToSelect('name');
+        $object = $objectCollection->getFirstItem();
+        $names = Array();
+
+        while ($object->getLevel() > 0) {
+            $names[] = $object->getName();
+            $object = $object->getParentCategory();
+        }
+        
+        return implode('/', array_reverse($names));
     }
 
     protected function getAttributeValueFromList($attributeCode) {
