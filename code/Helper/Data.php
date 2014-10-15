@@ -5,6 +5,13 @@ class BlueAcorn_UniversalAnalytics_Helper_Data extends Mage_Core_Helper_Abstract
     const BAUA_SESSION_STOREDHTML_NAME = 'baua_session_data';
     protected $_translationArray = array();
 
+
+    public function generateProductImpressions() {
+        $monitor = Mage::getSingleton('baua/monitor');
+        
+        return $monitor->generateProductImpressions();
+    }
+
     /**
      * Get translation values from Config Defaults
      * @param $part

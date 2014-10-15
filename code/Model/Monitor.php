@@ -18,6 +18,18 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $this->helper = Mage::helper('baua');
     }
 
+    public function generateProductImpressions() {
+        $impressionList = '';
+        $blockStart = 'ga("ec:addImpression", ';
+        $blockEnd = ');';
+
+        foreach ($this->productImpressionList as $item) {
+            $impressionList .= $blockStart . json_encode($item) . $blockEnd;
+        }
+
+        return $impressionList;
+    }
+
     /**
      * Add product information to the impression list
      *
