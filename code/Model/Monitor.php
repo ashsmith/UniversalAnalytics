@@ -21,6 +21,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             $data[$googleAttr] = $this->findAttributeValue($product, $ba);
         }
 
+        $productImpressionList[] = $data;
     }
 
     protected function findAttributeValue($product, $set) {
