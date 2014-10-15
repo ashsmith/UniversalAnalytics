@@ -8,10 +8,22 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     private $helper;
 
+    /**
+     * Constructor, sets up a shortcut variable for the main helper
+     * class.
+     *
+     * @name __construct
+     */
     public function __construct() {
         $this->helper = Mage::helper('baua');
     }
 
+    /**
+     * Add product information to the impression list
+     *
+     * @name addProductImpression
+     * @param Mage_Catalog_Model_Product $product 
+     */
     public function addProductImpression($product) {
         $trans = $this->helper->getTranslation('addImpression');
 
@@ -24,6 +36,14 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $productImpressionList[] = $data;
     }
 
+    /**
+     * Initial entry point for finding product attribute values
+     *
+     * @name findAttributeValue
+     * @param Mage_Catalog_Model_Product $product
+     * @param string $attribute
+     * @return mixed
+     */
     protected function findAttributeValue($product, $attribute) {
         $newValue = null;
 
@@ -35,6 +55,14 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         return $newValue;
     }
 
+    /**
+     * Gets values out of list attributes
+     *
+     * @name getListAttributeValue
+     * @param Mage_Catalog_Model_Product $product
+     * @param string $name
+     * @return mixed
+     */
     protected function getListAttributeValue($product, $name) {
         if (array_key_exists($name, $this->productAttributeValueList)) {
             return $this->productAttributeValueList[$name][$product->getData($name)];
@@ -43,6 +71,15 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         }
     }
 
+    /**
+     * Gets values out of "normal" attributes. This is for any
+     * attribute that can be retrieved via normal get methods.
+     *
+     * @name getNormalAttributeValue
+     * @param Mage_Catalog_Model_Product $product
+     * @param string $name
+     * @return mixed
+     */
     protected function getNormalAttributeValue($product, $name) {
         $method = 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $name)));
         $value = $product->$method();
@@ -54,6 +91,13 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         return $value;
     }
 
+    /**
+     * Build a list of product categories in hierarchical order.
+     *
+     * @name parseCategoryValue
+     * @param Mage_Catalog_Model_Resource_Category_Collection $objectCollection
+     * @return string
+     */
     protected function parseCategoryValue($objectCollection) {
         $objectCollection->addAttributeToSelect('name');
         $object = $objectCollection->getFirstItem();
@@ -67,6 +111,14 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         return implode('/', array_reverse($names));
     }
 
+    /**
+     * Attempts to pull all values for an attribute list and save
+     * them.
+     *
+     * @name getAttributeValueFromList
+     * @param string $attributeCode
+     * @return bool
+     */
     protected function getAttributeValueFromList($attributeCode) {
         $attributeDetails = Mage::getSingleton("eav/config")->getAttribute("catalog_product", $attributeCode); 
         $options = $attributeDetails->getSource()->getAllOptions(false);
