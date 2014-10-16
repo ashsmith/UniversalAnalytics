@@ -21,7 +21,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     public function generateProductImpressions() {
         $impressionList = '';
         $blockStart = 'ga("ec:addImpression", ';
-        $blockEnd = ');';
+        $blockEnd = ");\n";
 
         foreach ($this->productImpressionList as $item) {
             $impressionList .= $blockStart . json_encode($item) . $blockEnd;
