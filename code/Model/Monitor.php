@@ -45,7 +45,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             $data[$googleAttr] = $this->findAttributeValue($product, $magentoAttr);
         }
 
-        $this->productImpressionList[] = $data;
+        $this->productImpressionList[] = array_filter($data);
     }
 
     /**
