@@ -77,7 +77,10 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      */
     protected function getListAttributeValue($product, $name) {
         if (array_key_exists($name, $this->productAttributeValueList)) {
-            return $this->productAttributeValueList[$name][$product->getData($name)];
+            $index = $product->getData($name);
+            if ($index !== null) {
+                return $this->productAttributeValueList[$name][$index];
+            }
         } else {
             if ($this->getAttributeValueFromList($name)) return $this->getListAttributeValue($product, $name);
         }
