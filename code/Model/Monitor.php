@@ -38,11 +38,16 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      */
     public function addProductImpression($product) {
         $trans = $this->helper->getTranslation('addImpression');
-
         $data = Array();
+        $attributeList = Array();
 
         foreach ($trans as $googleAttr => $magentoAttr) {
-            $data[$googleAttr] = $this->findAttributeValue($product, $magentoAttr);
+            $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
+
+            foreach ($attributeList as $subAttribute) {
+                $data[$googleAttr] = $this->findAttributeValue($product, $subAttribute);
+                if ($data[$googleAttr] !== null) break;
+            }
         }
 
         $this->productImpressionList[] = array_filter($data);

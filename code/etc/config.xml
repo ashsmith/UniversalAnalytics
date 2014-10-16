@@ -92,7 +92,10 @@
                     <category>category_collection</category>
 		    <variant>color</variant>
 		    <!-- position -->
-		    <price>price</price>
+		    <price>
+			<specialPrice/>
+			<price/>
+		    </price>
 		</addImpression>
 
                 <addproduct>
