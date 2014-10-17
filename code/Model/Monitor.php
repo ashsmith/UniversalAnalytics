@@ -56,7 +56,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $data['list'] = $listName;
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
 
-        $this->productImpressionList[$list][] = array_filter($data, 'strlen');
+        $this->productImpressionList[$listName][] = array_filter($data, 'strlen');
     }
 
     /**
