@@ -40,6 +40,8 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @param string $listName
      */
     public function addProductImpression($product, $listName) {
+        if ($product->getVisibility() == 1) return;
+
         $trans = $this->helper->getTranslation('addImpression');
         $data = Array();
         $attributeList = Array();
