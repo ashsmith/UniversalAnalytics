@@ -7,8 +7,13 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         $collection = $observer->getCollection();
         $monitor = Mage::getSingleton('baua/monitor');
 
+        preg_match('/Resource_(.*)_Collection/', get_class($collection), $listName);
+        if (is_array($listName) && count($listName) >= 2) {
+            $listName = $listName[1];
+        }
+
         foreach ($collection as $product) {
-            $monitor->addProductImpression($product);
+            $monitor->addProductImpression($product, $listName);
         }
     }
 

@@ -23,8 +23,10 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $blockStart = 'ga("ec:addImpression", ';
         $blockEnd = ");\n";
 
-        foreach ($this->productImpressionList as $item) {
-            $impressionList .= $blockStart . json_encode($item) . $blockEnd;
+        foreach ($this->productImpressionList as $listName => $listItem) {
+            foreach ($listItem as $item) {
+                $impressionList .= $blockStart . json_encode($item) . $blockEnd;
+            }
         }
 
         return $impressionList;
@@ -34,9 +36,10 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * Add product information to the impression list
      *
      * @name addProductImpression
-     * @param Mage_Catalog_Model_Product $product 
+     * @param Mage_Catalog_Model_Product $product
+     * @param string $listName
      */
-    public function addProductImpression($product) {
+    public function addProductImpression($product, $listName) {
         $trans = $this->helper->getTranslation('addImpression');
         $data = Array();
         $attributeList = Array();
@@ -50,7 +53,10 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             }
         }
 
-        $this->productImpressionList[] = array_filter($data);
+        $data['list'] = $listName;
+        $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
+
+        $this->productImpressionList[$list][] = array_filter($data, 'strlen');
     }
 
     /**
