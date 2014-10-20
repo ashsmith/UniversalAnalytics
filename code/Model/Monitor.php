@@ -19,17 +19,11 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     public function generateProductImpressions() {
-        $impressionList = '';
-        $blockStart = 'ga("ec:addImpression", ';
-        $blockEnd = ");\n";
+        return $this->generateProductJSList('ec:addImpression');
+    }
 
-        foreach ($this->productImpressionList as $listName => $listItem) {
-            foreach ($listItem as $item) {
-                $impressionList .= $blockStart . json_encode($item) . $blockEnd;
-            }
-        }
-
-        return $impressionList;
+    public function generateProductClickEvents() {
+        return $this->generateProductJSList('ec:addProduct');
     }
 
     /**
@@ -58,7 +52,35 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $data['list'] = $listName;
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
 
-        $this->productImpressionList[$listName][] = array_filter($data, 'strlen');
+        $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
+    }
+
+    protected function generateProductJSList($action) {
+        $impressionList = '';
+
+        foreach ($this->productImpressionList as $listName => $listItem) {
+            foreach ($listItem as $item) {
+                $impressionList .= $this->generateGoogleJS($action, $item);
+            }
+        }
+
+        return $impressionList;
+    }
+
+    protected function generateGoogleJS() {
+        $outputList = Array();
+        $blockStart = 'ga(';
+        $blockEnd = ");\n";
+
+        foreach (func_get_args() as $element) {
+            if (is_array($element)) {
+                $outputList[] = json_encode($element); 
+            } else {
+                $outputList[] = "'" . $element . "'";
+            }
+        }
+
+        return $blockStart . implode(', ', $outputList) . $blockEnd;
     }
 
     /**
