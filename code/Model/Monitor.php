@@ -55,6 +55,14 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
     }
 
+    /**
+     * Generates a list of product calls in a Universal Analytics
+     * format.
+     *
+     * @name generateProductJSList
+     * @param $action
+     * @return string
+     */
     protected function generateProductJSList($action) {
         $impressionList = '';
 
@@ -67,6 +75,14 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         return $impressionList;
     }
 
+    /**
+     * Generates a block of JS text for Universal Analytics
+     * calls. This method takes an indeterminate number of parameters.
+     *
+     * @name generateGoogleJS
+     * @param multi
+     * @return string
+     */
     protected function generateGoogleJS() {
         $outputList = Array();
         $blockStart = 'ga(';
