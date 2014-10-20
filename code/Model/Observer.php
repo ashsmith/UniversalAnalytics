@@ -9,7 +9,7 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
 
         preg_match('/Resource_(.*)_Collection/', get_class($collection), $listName);
         if (is_array($listName) && count($listName) >= 2) {
-            $listName = $listName[1];
+            $listName = str_replace('_', ' ', $listName[1]);
         }
 
         foreach ($collection as $product) {
