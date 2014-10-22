@@ -16,6 +16,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      */
     public function __construct() {
         $this->helper = Mage::helper('baua');
+        $this->JS = Mage::getSingleton('baua/js');
     }
 
     public function generateProductImpressions() {
@@ -23,7 +24,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     public function generateProductClickEvents() {
-        return $this->generateProductJSList('ec:addProduct');
+        return $this->generateProductClickList();
     }
 
     /**
@@ -68,7 +69,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         foreach ($this->productImpressionList as $listName => $listItem) {
             foreach ($listItem as $item) {
-                $impressionList .= $this->generateGoogleJS($action, $item);
+                $impressionList .= $this->JS->generateGoogleJS($action, $item);
             }
         }
 
