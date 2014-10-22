@@ -76,28 +76,22 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         return $impressionList;
     }
 
-    /**
-     * Generates a block of JS text for Universal Analytics
-     * calls. This method takes an indeterminate number of parameters.
-     *
-     * @name generateGoogleJS
-     * @param multi
-     * @return string
-     */
-    protected function generateGoogleJS() {
-        $outputList = Array();
-        $blockStart = 'ga(';
-        $blockEnd = ");\n";
+    protected function generateProductClickList() {
+        $text = '';
 
-        foreach (func_get_args() as $element) {
-            if (is_array($element)) {
-                $outputList[] = json_encode($element); 
-            } else {
-                $outputList[] = "'" . $element . "'";
+        foreach ($this->productImpressionList as $listName => $listItem) {
+            foreach ($listItem as $url => $item) {
+                $product = $this->JS->generateGoogleJS('ec:addProduct', $item);
+                $action = $this->JS->generateGoogleJS('ec:setAction', 'click');
+                $send = $this->JS->generateGoogleJS('send', 'event', 'homepage', 'click', '');
+
+                $text .= '$$(\'a[href="' . $url . '"]\')';
+                $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
+                $text .= "\n";
             }
         }
 
-        return $blockStart . implode(', ', $outputList) . $blockEnd;
+        return $text;
     }
 
     /**
