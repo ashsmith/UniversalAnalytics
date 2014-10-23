@@ -96,9 +96,11 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
                 $text .= "\n";
 
-                $text .= '$$(\'form[action*="checkout/cart/add"][action*="product/' . $item['id'] . '"] button.btn-cart\')';
-                $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
-                $text .= "\n";
+                if ($listName == 'Detail') {
+                    $text .= '$$(\'form[action*="checkout/cart/add"][action*="product/' . $item['id'] . '"] button.btn-cart\')';
+                    $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
+                    $text .= "\n";
+                }
 
             }
         }
