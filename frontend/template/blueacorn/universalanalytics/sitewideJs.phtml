@@ -13,6 +13,8 @@
          <?php echo $helper->generateProductImpressions() ?>
 
          ga('send', 'pageview');
+
+         <?php echo $helper->generateProductClickEvents() ?>
     </script>
     <?php $_helper->setSessionData(null) ?>
 <?php endif ?>
