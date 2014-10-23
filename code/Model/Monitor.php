@@ -88,6 +88,13 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 $text .= '$$(\'a[href="' . $url . '"]\')';
                 $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
                 $text .= "\n";
+
+                $action = $this->JS->generateGoogleJS('ec:setAction', 'add');
+                $send = $this->JS->generateGoogleJS('send', 'event', 'homepage', 'click', 'add to cart');
+
+                $text .= '$$(\'button[onClick*="checkout/cart/add"][onClick*="product/' . $item['id'] . '"]\')';
+                $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
+                $text .= "\n";
             }
         }
 
