@@ -4,6 +4,8 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     private $productImpressionList = Array();
 
+    private $quoteList = Array();
+
     private $productAttributeValueList = Array();
 
     private $helper;
@@ -96,6 +98,19 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
                 $text .= "\n";
 
+                if (in_array($item['id'], $this->quoteList)) {
+                    $localQuoteList = $this->findQuoteProduct($item['id']);
+
+                    $removeAction = $this->JS->generateGoogleJS('ec:setAction', 'remove');
+                    $send = $this->JS->generateGoogleJS('send', 'event', $listName, 'click', 'removeFromCart');
+
+                    foreach ($localQuoteList as $quoteId) {
+                        $text .= '$$(\'a[href*="checkout/cart"][href*="elete/id/' . $quoteId . '"]\')';
+                        $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $removeAction . $send . 'Event.stop(event);'));
+                        $text .= "\n";
+                    }
+                }
+
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'add');
                 $send = $this->JS->generateGoogleJS('send', 'event', 'UX', 'click', 'add to cart');
 
@@ -113,6 +128,23 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         }
 
         return $text;
+    }
+
+    public function addQuoteProduct($item) {
+        $product = $item->getProduct();
+        $this->quoteList[$item->getId()] = $product->getId();
+    }
+
+    protected function findQuoteProduct($id) {
+        $results = Array();
+
+        foreach ($this->quoteList as $quoteId => $productId) {
+            if ($id == $productId) {
+                $results[] = $quoteId;
+            }
+        }
+        
+        return $results;
     }
 
     /**
