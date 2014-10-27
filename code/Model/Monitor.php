@@ -78,19 +78,26 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     protected function generateProductClickList() {
         $text = '';
+        $urlList = Array();
 
         foreach ($this->productImpressionList as $listName => $listItem) {
             foreach ($listItem as $url => $item) {
+                // This is required in order to avoid multiple event
+                // calls, but has the side-effect of basically
+                // homoginizing listNames
+                if (in_array($url, $urlList)) break;
+                $urlList[] = $url;
+
                 $product = $this->JS->generateGoogleJS('ec:addProduct', $item);
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'click');
-                $send = $this->JS->generateGoogleJS('send', 'event', 'homepage', 'click', '');
+                $send = $this->JS->generateGoogleJS('send', 'event', $listName, 'click', '');
 
                 $text .= '$$(\'a[href="' . $url . '"]\')';
                 $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
                 $text .= "\n";
 
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'add');
-                $send = $this->JS->generateGoogleJS('send', 'event', 'homepage', 'click', 'add to cart');
+                $send = $this->JS->generateGoogleJS('send', 'event', 'UX', 'click', 'add to cart');
 
                 $text .= '$$(\'button[onClick*="checkout/cart/add"][onClick*="product/' . $item['id'] . '"]\')';
                 $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
