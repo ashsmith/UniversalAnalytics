@@ -27,6 +27,15 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         }
     }
 
+    public function viewPage($observer) {
+        $monitor = Mage::getSingleton('baua/monitor');
+        $cartItems = Mage::getModel('checkout/cart')->getQuote()->getAllItems();
+
+        foreach ($cartItems as $item) {
+            $monitor->addQuoteProduct($item);
+        }
+    }
+
     /**
      * Observer that builds add product payload
      * @param $observer
