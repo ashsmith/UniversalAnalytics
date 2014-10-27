@@ -90,14 +90,14 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
                 $product = $this->JS->generateGoogleJS('ec:addProduct', $item);
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'click');
-                $send = $this->JS->generateGoogleJS('send', 'event', 'homepage', 'click', '');
+                $send = $this->JS->generateGoogleJS('send', 'event', $listName, 'click', '');
 
                 $text .= '$$(\'a[href="' . $url . '"]\')';
                 $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
                 $text .= "\n";
 
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'add');
-                $send = $this->JS->generateGoogleJS('send', 'event', 'homepage', 'click', 'add to cart');
+                $send = $this->JS->generateGoogleJS('send', 'event', 'UX', 'click', 'add to cart');
 
                 $text .= '$$(\'button[onClick*="checkout/cart/add"][onClick*="product/' . $item['id'] . '"]\')';
                 $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
