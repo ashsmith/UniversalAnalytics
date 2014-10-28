@@ -106,7 +106,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
                     foreach ($localQuoteList as $quoteId) {
                         $text .= '$$(\'a[href*="checkout/cart"][href*="elete/id/' . $quoteId . '"]\')';
-                        $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $removeAction . $send . 'Event.stop(event);'));
+                        $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $removeAction . $send));
                         $text .= "\n";
                     }
                 }
