@@ -1,16 +1,34 @@
 <!--- Universal Analytics Start --->
+<?php $this->JS = Mage::getSingleton('baua/js'); ?>
+<?php $itemsCollection = Mage::getSingleton('checkout/session')->getQuote()->getItemsCollection(); ?>
 <?php $_helper = Mage::helper('baua') ?>
+<?php $productArray = array(); ?>
 <?php if($_helper->isActive()): ?>
-<script type="text/javascript">
-    /**
-     * This overrides the checkout.gotoSection to perform the ga push.
-     * @type {gotoSection}
-     */
-    checkout.gotoSectionparent = checkout.gotoSection;
-    checkout.gotoSection = function(section) {
-        this.gotoSectionparent(section);
-        ga('ec:setAction','checkout', {'step': this.steps.indexOf(section), 'label': section });
-    };
-</script>
+    <?php foreach ($itemsCollection as $item) :?>
+        <?php $result = Mage::getModel('baua/monitor')->generateProductData($item); ?>
+        <?php if($result != null) : ?>
+            <?php $productArray[] = $this->JS->generateGoogleJS('ec:addProduct', $result) . "\n"; ?>
+        <?php endif; ?>
+    <?php endforeach; ?>
+
+
+    <script type="text/javascript">
+        /**
+         * This overrides the checkout.gotoSection to perform the ga push.
+         * @type {gotoSection}
+         */
+        checkout.gotoSectionparent = checkout.gotoSection;
+        checkout.gotoSection = function(section) {
+
+            this.gotoSectionparent(section);
+
+            ga('ec:setAction','checkout', {'step': this.steps.indexOf(section), 'label': section });
+            <?php foreach($productArray as $product) : ?>
+                <?php echo $product; ?>
+            <?php endforeach; ?>
+            <?php echo $this->JS->generateGoogleJS('send', 'event', 'Checkout', 'Option', '')?>
+        };
+    </script>
+
 <?php endif ?>
 <!--- Universal Analytics End --->
