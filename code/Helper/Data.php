@@ -12,6 +12,12 @@ class BlueAcorn_UniversalAnalytics_Helper_Data extends Mage_Core_Helper_Abstract
         return $monitor->generateProductImpressions();
     }
 
+    public function generatePromoImpressions() {
+        $monitor = Mage::getSingleton('baua/monitor');
+
+        return $monitor->generatePromoImpressions();
+    }
+
     public function generateProductClickEvents() {
         $monitor = Mage::getSingleton('baua/monitor');
 

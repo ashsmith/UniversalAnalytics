@@ -23,11 +23,15 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     public function generateProductImpressions() {
-        return $this->generateProductJSList('ec:addImpression');
+        return $this->generateImpressionJSList('ec:addImpression', $this->productImpressionList);
     }
 
     public function generateProductClickEvents() {
         return $this->generateProductClickList();
+    }
+
+    public function generatePromoImpressions() {
+        return $this->generateImpressionJSList('ec:addPromo', $this->promoImpressionList);
     }
 
     /**
@@ -130,21 +134,13 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             }
         }
 
-        $this->promoImpressionList[$alias] = array_filter($data, 'strlen');
+        $this->promoImpressionList['default'][$alias] = array_filter($data, 'strlen');
     }
 
-    /**
-     * Generates a list of product calls in a Universal Analytics
-     * format.
-     *
-     * @name generateProductJSList
-     * @param $action
-     * @return string
-     */
-    protected function generateProductJSList($action) {
+    protected function generateImpressionJSList($action, $list) {
         $impressionList = '';
 
-        foreach ($this->productImpressionList as $listName => $listItem) {
+        foreach ($list as $listName => $listItem) {
             foreach ($listItem as $item) {
                 $impressionList .= $this->JS->generateGoogleJS($action, $item);
             }
