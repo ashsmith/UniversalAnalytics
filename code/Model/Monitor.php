@@ -67,25 +67,11 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @return array
      */
     public function generateProductData($item) {
-
-        $trans = $this->helper->getTranslation('addproduct');
-        $data = Array();
-        $attributeList = Array();
         $product = Mage::getModel('catalog/product')->load($item->getProductId());
 
         if ($product->getVisibility() == 1) return null;
 
-
-        foreach ($trans as $magentoAttr => $googleAttr) {
-            $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
-
-            foreach ($attributeList as $subAttribute) {
-                $data[$googleAttr] = $this->findAttributeValue($product, $subAttribute);
-                if ($data[$googleAttr] !== null) break;
-            }
-        }
-
-        $data['category'] = Mage::getModel('catalog/category')->load($data['category'])->getName();
+        $data        = $this->parseObject($product, 'addProduct');
         $data['qty'] = $item->getQty();
 
         return $data;
@@ -101,40 +87,34 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     public function addProductImpression($product, $listName) {
         if ($product->getVisibility() == 1) return;
 
-        $trans = $this->helper->getTranslation('addImpression');
-        $data = Array();
-        $attributeList = Array();
-
-        foreach ($trans as $googleAttr => $magentoAttr) {
-            $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
-
-            foreach ($attributeList as $subAttribute) {
-                $data[$googleAttr] = $this->findAttributeValue($product, $subAttribute);
-                if ($data[$googleAttr] !== null) break;
-            }
-        }
-
-        $data['list'] = $listName;
+        $data             = $this->parseObject($product, 'addImpression');
+        $data['list']     = $listName;
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
 
         $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
     }
 
     public function addPromoImpression($banner, $alias) {
-        $trans = $this->helper->getTranslation('addPromo');
-        $data = Array();
+        $data = $this->parseObject($banner, 'addPromo');
+
+        $this->promoImpressionList['default'][$alias] = array_filter($data, 'strlen');
+    }
+
+    protected function parseObject($object, $translationName) {
+        $trans         = $this->helper->getTranslation($translationName);
+        $data          = Array();
         $attributeList = Array();
 
         foreach ($trans as $googleAttr => $magentoAttr) {
             $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
 
             foreach ($attributeList as $subAttribute) {
-                $data[$googleAttr] = $this->findAttributeValue($banner, $subAttribute);
+                $data[$googleAttr] = $this->findAttributeValue($object, $subAttribute);
                 if ($data[$googleAttr] !== null) break;
             }
         }
 
-        $this->promoImpressionList['default'][$alias] = array_filter($data, 'strlen');
+        return $data;
     }
 
     protected function generateImpressionJSList($action, $list) {
