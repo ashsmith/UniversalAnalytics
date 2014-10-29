@@ -37,28 +37,30 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @return array
      */
     public function generateProductData($item) {
+
+
         $trans = $this->helper->getTranslation('addproduct');
         $data = Array();
         $attributeList = Array();
         $product = Mage::getModel('catalog/product')->load($item->getProductId());
 
-        if($product->getVisibility() != "0"){
-            foreach ($trans as $magentoAttr => $googleAttr) {
-                $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
+        if ($product->getVisibility() == 1) return null;
 
-                foreach ($attributeList as $subAttribute) {
-                    $data[$googleAttr] = $this->findAttributeValue($product, $subAttribute);
-                    if ($data[$googleAttr] !== null) break;
-                }
+
+        foreach ($trans as $magentoAttr => $googleAttr) {
+            $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
+
+            foreach ($attributeList as $subAttribute) {
+                $data[$googleAttr] = $this->findAttributeValue($product, $subAttribute);
+                if ($data[$googleAttr] !== null) break;
             }
-
-            $data['category'] = Mage::getModel('catalog/category')->load($data['category'])->getName();
-            $data['qty'] = $item->getQty();
-
-            return $data;
-        } else {
-            return null;
         }
+
+        $data['category'] = Mage::getModel('catalog/category')->load($data['category'])->getName();
+        $data['qty'] = $item->getQty();
+
+        return $data;
+
 
     }
 
