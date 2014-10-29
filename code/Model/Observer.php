@@ -45,7 +45,7 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
             $alias = $block->getBlockAlias();
             $transport = $observer->getTransport();
             $html = $transport->getHtml();
-            $modifiedHtml = preg_replace('/(^<\w+\s+)/', '$1 banner-alias="' . $alias . '" ', $modifiedHtml);
+            $modifiedHtml = preg_replace('/(^<\w+\s+)/', '$1 banner-alias="' . $alias . '" ', $html);
             $transport->setHtml($modifiedHtml);
 
             foreach ($block->getBannerIds() as $id) {
