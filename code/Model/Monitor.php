@@ -3,6 +3,7 @@
 class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     private $productImpressionList = Array();
+    private $promoImpressionList   = Array();
 
     private $quoteList = Array();
 
@@ -113,6 +114,23 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
 
         $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
+    }
+
+    public function addPromoImpression($banner, $alias) {
+        $trans = $this->helper->getTranslation('addPromo');
+        $data = Array();
+        $attributeList = Array();
+
+        foreach ($trans as $googleAttr => $magentoAttr) {
+            $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
+
+            foreach ($attributeList as $subAttribute) {
+                $data[$googleAttr] = $this->findAttributeValue($banner, $subAttribute);
+                if ($data[$googleAttr] !== null) break;
+            }
+        }
+
+        $this->promoImpressionList[$alias] = array_filter($data, 'strlen');
     }
 
     /**
