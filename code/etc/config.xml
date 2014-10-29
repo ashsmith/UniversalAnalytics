@@ -149,6 +149,14 @@
                     <!--<total_item_count>product_count</total_item_count>-->
                     <product_type>product_type</product_type>
                 </capturetransactionitems>
+                <transaction>
+                    <entity_id>id</entity_id>
+                    <store_name>affiliation</store_name>
+                    <base_grand_total>revenue</base_grand_total>
+                    <tax_amount>tax</tax_amount>
+                    <shipping_amount>shipping</shipping_amount>
+                    <coupon_code>coupon</coupon_code>
+                </transaction>
             </translation>
         </baua>
     </default>

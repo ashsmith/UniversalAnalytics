@@ -30,6 +30,31 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     /**
+     * Add generate an array of transaction data
+     *
+     * @name generateTransactionData
+     * @param Mage_Sales_Model_Order $order
+     * @return array
+     */
+    public function generateTransactionData($order) {
+
+        $trans = $this->helper->getTranslation('transaction');
+        $data = Array();
+        $attributeList = Array();
+
+        foreach ($trans as $magentoAttr => $googleAttr) {
+            $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
+
+            foreach ($attributeList as $subAttribute) {
+                $data[$googleAttr] = $this->findAttributeValue($order, $subAttribute);
+                if ($data[$googleAttr] !== null) break;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Add generate an array of product data
      *
      * @name generateProductData
@@ -37,7 +62,6 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @return array
      */
     public function generateProductData($item) {
-
 
         $trans = $this->helper->getTranslation('addproduct');
         $data = Array();
@@ -60,8 +84,6 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $data['qty'] = $item->getQty();
 
         return $data;
-
-
     }
 
     /**

@@ -28,4 +28,10 @@
                 template="blueacorn/universalanalytics/onestepcheckout.phtml"/>
         </reference>
     </checkout_onepage_index>
+    <checkout_onepage_success>
+        <reference name="footer" before="-">
+            <block type="core/template" name="universalanalytics_success" as="universalanalytics_success"
+                   template="blueacorn/universalanalytics/success.phtml"/>
+        </reference>
+    </checkout_onepage_success>
 </layout>
