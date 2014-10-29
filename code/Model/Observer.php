@@ -42,8 +42,6 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
      */
     public function addProductJs($observer)
     {
-        $test = Mage::getModel('baua/product');
-        $productData = $test->getData();
 
         $_helper = Mage::helper('baua');
         $trans = $_helper->getTranslation('addproduct');

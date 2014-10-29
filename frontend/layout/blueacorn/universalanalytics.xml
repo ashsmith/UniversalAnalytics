@@ -14,12 +14,24 @@
     <default>
         <reference name="footer" before="-">
             <block type="core/text_list" name="universalanalytics" as="universalanalytics" after="-">
-                <block type="universalanalytics/customVariables" name="universalanalytics_customer_type"
-                       as="universalanalytics_customer_type"
-                       template="blueacorn/universalanalytics/customVariables.phtml"/>
+                <!--<block type="universalanalytics/customVariables" name="universalanalytics_customer_type"-->
+                       <!--as="universalanalytics_customer_type"-->
+                       <!--template="blueacorn/universalanalytics/customVariables.phtml"/>-->
                 <block type="core/template" name="universalanalytics_sitewide" as="universalanalytics_sitewide"
                        template="blueacorn/universalanalytics/sitewideJs.phtml"/>
             </block>
         </reference>
     </default>
+    <checkout_onepage_index>
+        <reference name="footer" before="-">
+            <block type="core/template" name="universalanalytics_checkout" as="universalanalytics_checkout"
+                template="blueacorn/universalanalytics/onestepcheckout.phtml"/>
+        </reference>
+    </checkout_onepage_index>
+    <checkout_onepage_success>
+        <reference name="footer" before="-">
+            <block type="core/template" name="universalanalytics_success" as="universalanalytics_success"
+                   template="blueacorn/universalanalytics/success.phtml"/>
+        </reference>
+    </checkout_onepage_success>
 </layout>
