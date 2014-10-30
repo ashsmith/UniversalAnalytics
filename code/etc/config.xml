@@ -26,34 +26,6 @@
             </updates>
         </layout>
         <events>
-            <sales_quote_remove_item>
-                <observers>
-                    <baua>
-                        <type>model</type>
-                        <class>baua/observer</class>
-                        <method>removeProductJs</method>
-                    </baua>
-                </observers>
-            </sales_quote_remove_item>
-            <checkout_cart_product_add_after>
-                <observers>
-                    <baua>
-                        <type>model</type>
-                        <class>baua/observer</class>
-                        <method>addProductJs</method>
-                    </baua>
-                </observers>
-            </checkout_cart_product_add_after>
-            <checkout_submit_all_after>
-                <observers>
-                    <baua>
-                        <type>model</type>
-                        <class>baua/observer</class>
-                        <method>captureTransactionJS</method>
-                    </baua>
-                </observers>
-            </checkout_submit_all_after>
-
 	    <catalog_product_load_after>
 		<observers>
 		    <baua>
