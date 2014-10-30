@@ -36,7 +36,6 @@
 		</observers>
 	    </catalog_product_load_after>
 
-	    
 	    <catalog_product_collection_load_after>
 		<observers>
 		    <baua>
@@ -94,7 +93,7 @@
 		    <name>name</name>
 		</addPromo>
 
-                <addproduct>
+                <addProduct>
                     <entity_id>id</entity_id>
                     <sku>sku</sku>
                     <name>name</name>
@@ -104,7 +103,9 @@
                     <qty>qty</qty>
                     <cart_qty>cart_qty</cart_qty>
                     <type_id>type_id</type_id>
-                </addproduct>
+		    <category>category_collection</category>
+                </addProduct>
+
                 <removeproduct>
                     <product_id>id</product_id>
                     <sku>sku</sku>
