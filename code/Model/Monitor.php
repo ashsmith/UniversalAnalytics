@@ -110,6 +110,14 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
     }
 
+    public function addProduct($product, $listName = 'Detail') {
+        $data             = $this->parseObject($product, 'addProduct');
+        $data['list']     = $listName;
+        $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
+
+        $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
+    }
+
     public function addPromoImpression($banner, $alias) {
         $data = $this->parseObject($banner, 'addPromo');
 
@@ -137,8 +145,9 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $impressionList = '';
 
         foreach ($list as $listName => $listItem) {
+            $newAction = ($listName == "Detail") ? 'ec:addProduct' : $action;
             foreach ($listItem as $item) {
-                $impressionList .= $this->JS->generateGoogleJS($action, $item);
+                $impressionList .= $this->JS->generateGoogleJS($newAction, $item);
             }
         }
 
