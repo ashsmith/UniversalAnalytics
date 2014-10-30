@@ -85,6 +85,16 @@
 		</observers>
 	    </controller_action_layout_generate_blocks_after>
 
+	    <core_block_abstract_to_html_after>
+		<observers>
+		    <baua>
+			<type>model</type>
+			<class>baua/observer</class>
+			<method>viewPromotion</method>
+		    </baua>
+		</observers>
+	    </core_block_abstract_to_html_after>
+
         </events>
     </frontend>
     <default>
@@ -106,6 +116,11 @@
 			<price/>
 		    </price>
 		</addImpression>
+
+		<addPromo>
+		    <id>banner_id</id>
+		    <name>name</name>
+		</addPromo>
 
                 <addproduct>
                     <entity_id>id</entity_id>

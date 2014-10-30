@@ -36,6 +36,25 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         }
     }
 
+    public function viewPromotion($observer) {
+        $block = $observer->getBlock();
+        $className = get_class($block);
+
+        if ($className == 'Enterprise_Banner_Block_Widget_Banner') {
+            $monitor = Mage::getSingleton('baua/monitor');
+            $alias = $block->getBlockAlias();
+            $transport = $observer->getTransport();
+            $html = $transport->getHtml();
+            $modifiedHtml = preg_replace('/(^<\w+\s+)/', '$1 banner-alias="' . $alias . '" ', $html);
+            $transport->setHtml($modifiedHtml);
+
+            foreach ($block->getBannerIds() as $id) {
+                $banner = Mage::getModel('enterprise_banner/banner')->load($id);
+                $monitor->addPromoImpression($banner, $alias);
+            }
+        }
+    }
+
     /**
      * Observer that builds add product payload
      * @param $observer

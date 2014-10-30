@@ -3,6 +3,7 @@
 class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     private $productImpressionList = Array();
+    private $promoImpressionList   = Array();
 
     private $quoteList = Array();
 
@@ -22,11 +23,15 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     public function generateProductImpressions() {
-        return $this->generateProductJSList('ec:addImpression');
+        return $this->generateImpressionJSList('ec:addImpression', $this->productImpressionList);
     }
 
     public function generateProductClickEvents() {
         return $this->generateProductClickList();
+    }
+
+    public function generatePromoImpressions() {
+        return $this->generateImpressionJSList('ec:addPromo', $this->promoImpressionList);
     }
 
     /**
@@ -62,25 +67,11 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @return array
      */
     public function generateProductData($item) {
-
-        $trans = $this->helper->getTranslation('addproduct');
-        $data = Array();
-        $attributeList = Array();
         $product = Mage::getModel('catalog/product')->load($item->getProductId());
 
         if ($product->getVisibility() == 1) return null;
 
-
-        foreach ($trans as $magentoAttr => $googleAttr) {
-            $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
-
-            foreach ($attributeList as $subAttribute) {
-                $data[$googleAttr] = $this->findAttributeValue($product, $subAttribute);
-                if ($data[$googleAttr] !== null) break;
-            }
-        }
-
-        $data['category'] = Mage::getModel('catalog/category')->load($data['category'])->getName();
+        $data        = $this->parseObject($product, 'addProduct');
         $data['qty'] = $item->getQty();
 
         return $data;
@@ -96,37 +87,40 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     public function addProductImpression($product, $listName) {
         if ($product->getVisibility() == 1) return;
 
-        $trans = $this->helper->getTranslation('addImpression');
-        $data = Array();
+        $data             = $this->parseObject($product, 'addImpression');
+        $data['list']     = $listName;
+        $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
+
+        $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
+    }
+
+    public function addPromoImpression($banner, $alias) {
+        $data = $this->parseObject($banner, 'addPromo');
+
+        $this->promoImpressionList['default'][$alias] = array_filter($data, 'strlen');
+    }
+
+    protected function parseObject($object, $translationName) {
+        $trans         = $this->helper->getTranslation($translationName);
+        $data          = Array();
         $attributeList = Array();
 
         foreach ($trans as $googleAttr => $magentoAttr) {
             $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
 
             foreach ($attributeList as $subAttribute) {
-                $data[$googleAttr] = $this->findAttributeValue($product, $subAttribute);
+                $data[$googleAttr] = $this->findAttributeValue($object, $subAttribute);
                 if ($data[$googleAttr] !== null) break;
             }
         }
 
-        $data['list'] = $listName;
-        $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
-
-        $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
+        return $data;
     }
 
-    /**
-     * Generates a list of product calls in a Universal Analytics
-     * format.
-     *
-     * @name generateProductJSList
-     * @param $action
-     * @return string
-     */
-    protected function generateProductJSList($action) {
+    protected function generateImpressionJSList($action, $list) {
         $impressionList = '';
 
-        foreach ($this->productImpressionList as $listName => $listItem) {
+        foreach ($list as $listName => $listItem) {
             foreach ($listItem as $item) {
                 $impressionList .= $this->JS->generateGoogleJS($action, $item);
             }
