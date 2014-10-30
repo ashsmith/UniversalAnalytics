@@ -21,11 +21,7 @@ class BlueAcorn_UniversalAnalytics_Model_Js {
     }
 
     public function anonFunc($paramList, $content) {
-
-        // $functionText = $this->func('function', $paramList);
-        // $functionText .= '{ ';
-
-        $functionText = 'function(' . $paramList . ') { ';
+        $functionText  = 'function(' . $paramList . ') { ';
         $functionText .= $content;
         $functionText .= ' }';
 
