@@ -5,10 +5,9 @@
 <?php $data = Mage::getModel('baua/monitor')->generateTransactionData($order); ?>
 
 <?php if($_helper->isActive()): ?>
-
     <script type="text/javascript">
         <?php echo $this->JS->generateGoogleJS('ec:setAction', 'purchase', $data) . "\n"; ?>
+        <?php echo $this->JS->generateGoogleJS('send', 'event', 'Checkout', 'Option', '')?>
     </script>
-
 <?php endif ?>
 <!--- Universal Analytics End --->
