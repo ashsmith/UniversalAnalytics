@@ -34,6 +34,10 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         return $this->generateImpressionJSList('ec:addPromo', $this->promoImpressionList);
     }
 
+    public function generatePromoClickEvents() {
+        return $this->generatePromoClickList();
+    }
+
     /**
      * Add generate an array of transaction data
      *
@@ -127,6 +131,23 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         }
 
         return $impressionList;
+    }
+
+    protected function generatePromoClickList() {
+        $text = '';
+
+        foreach ($this->promoImpressionList as $key => $item) {
+            foreach ($item as $alias => $promoData) {
+                
+                $promoText = $this->JS->generateGoogleJS('ec:addPromo', $promoData);
+                $action = $this->JS->generateGoogleJS('ec:setAction', 'promo_click');
+                $send = $this->JS->generateGoogleJS('send', 'event', 'Promotions', 'click', '');
+
+                $text .= $this->JS->attachForeachObserve('*[banner-alias="' . $alias . '"] a', $promoText . $action . $send);
+            }
+        }
+
+        return $text;
     }
 
     protected function generateProductClickList() {
