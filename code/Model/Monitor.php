@@ -145,9 +145,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'click');
                 $send = $this->JS->generateGoogleJS('send', 'event', $listName, 'click', '');
 
-                $text .= '$$(\'a[href="' . $url . '"]\')';
-                $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
-                $text .= "\n";
+                $text .= $this->JS->attachForeachObserve('a[href="' . $url . '"]', $product . $action . $send);
 
                 if (in_array($item['id'], $this->quoteList)) {
                     $localQuoteList = $this->findQuoteProduct($item['id']);
@@ -156,23 +154,27 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                     $send = $this->JS->generateGoogleJS('send', 'event', $listName, 'click', 'removeFromCart');
 
                     foreach ($localQuoteList as $quoteId) {
-                        $text .= '$$(\'a[href*="checkout/cart"][href*="elete/id/' . $quoteId . '"]\')';
-                        $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $removeAction . $send));
-                        $text .= "\n";
+
+                        $text .= $this->JS->attachForeachObserve(
+                            'a[href*="checkout/cart"][href*="elete/id/' . $quoteId . '"]', 
+                            $product . $removeAction . $send
+                        );
                     }
                 }
 
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'add');
                 $send = $this->JS->generateGoogleJS('send', 'event', 'UX', 'click', 'add to cart');
 
-                $text .= '$$(\'button[onClick*="checkout/cart/add"][onClick*="product/' . $item['id'] . '"]\')';
-                $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
-                $text .= "\n";
+                $text .= $this->JS->attachForeachObserve(
+                    'button[onClick*="checkout/cart/add"][onClick*="product/' . $item['id'] . '"]', 
+                    $product . $action . $send
+                );
 
                 if ($listName == 'Detail') {
-                    $text .= '$$(\'form[action*="checkout/cart/add"][action*="product/' . $item['id'] . '"] button.btn-cart\')';
-                    $text .= $this->JS->each('element' . $this->JS->observe('click', $product . $action . $send));
-                    $text .= "\n";
+                    $text .= $this->JS->attachForeachObserve(
+                        'form[action*="checkout/cart/add"][action*="product/' . $item['id'] . '"] button.btn-cart',
+                        $product . $action . $send
+                    );
                 }
 
             }

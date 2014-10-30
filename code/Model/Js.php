@@ -63,5 +63,12 @@ class BlueAcorn_UniversalAnalytics_Model_Js {
         return call_user_func_array(Array($this, 'call'), $params);
     }
 
+    public function attachForeachObserve($target, $observedCode, $action = 'click') {
+        $text  = '$$(\'' . $target . '\')';
+        $text .= $this->each('element' . $this->observe($action, $observedCode));
+        $text .= "\n";
+
+        return $text;
+    }
 
 }
