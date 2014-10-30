@@ -1,12 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * This is the layout xml file for BlueAcorn Optimizely. It creates two
- * blocks within a text_list block that output the sitewide optimizely script,
- * and the page specific targeting variables.
- *
- * Author: James Bruner, Blue Acorn
- * Version: 1.0.1
+ * This is the layout xml file for BlueAcorn Universal Analytics. 
  */
 
 -->
@@ -14,9 +9,6 @@
     <default>
         <reference name="footer" before="-">
             <block type="core/text_list" name="universalanalytics" as="universalanalytics" after="-">
-                <!--<block type="universalanalytics/customVariables" name="universalanalytics_customer_type"-->
-                       <!--as="universalanalytics_customer_type"-->
-                       <!--template="blueacorn/universalanalytics/customVariables.phtml"/>-->
                 <block type="core/template" name="universalanalytics_sitewide" as="universalanalytics_sitewide"
                        template="blueacorn/universalanalytics/sitewideJs.phtml"/>
             </block>
