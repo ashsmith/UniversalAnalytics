@@ -10,6 +10,8 @@
          ga('require', 'ec', 'ec.js');
          ga('create', '<?php echo Mage::getStoreConfig("google/analytics/account") ?>','<?php echo Mage::getStoreConfig("web/unsecure/base_url") ?>');
 
+         (window.gaDevIds=window.gaDevIds||[]).push('IgGwFC');
+
          <?php echo $helper->generateProductImpressions() ?>
          <?php echo $helper->generatePromoImpressions() ?>
 
