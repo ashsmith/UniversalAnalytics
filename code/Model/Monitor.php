@@ -9,6 +9,8 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     private $productAttributeValueList = Array();
 
+    private $action = null;
+
     private $helper;
 
     /**
@@ -36,6 +38,16 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     public function generatePromoClickEvents() {
         return $this->generatePromoClickList();
+    }
+
+    public function setAction($action) {
+        $this->action = $action;
+    }
+
+    public function getAction() {
+        if (isset($this->action)) {
+            return $this->JS->generateGoogleJS('ec:setAction', $this->action);
+        }
     }
 
     /**

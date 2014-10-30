@@ -30,6 +30,12 @@ class BlueAcorn_UniversalAnalytics_Helper_Data extends Mage_Core_Helper_Abstract
         return $monitor->generatePromoClickEvents();
     }
 
+    public function getAction() {
+        $monitor = Mage::getSingleton('baua/monitor');
+
+        return $monitor->getAction();
+    }
+
     /**
      * Get translation values from Config Defaults
      * @param $part

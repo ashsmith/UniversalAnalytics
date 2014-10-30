@@ -23,6 +23,7 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
 
         if ($product !== null) {
             $monitor = Mage::getSingleton('baua/monitor');
+            $monitor->setAction('detail');
             $monitor->addProductImpression($product, 'Detail');
         }
     }
