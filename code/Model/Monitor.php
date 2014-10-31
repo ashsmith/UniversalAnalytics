@@ -101,7 +101,8 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @param string $listName
      */
     public function addProductImpression($product, $listName) {
-        if ($product->getVisibility() == 1) return;
+
+        if ($product->getVisibility() == 1 || Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) return;
 
         $data             = $this->parseObject($product, 'addImpression');
         $data['list']     = $listName;
