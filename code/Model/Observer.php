@@ -23,7 +23,9 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
 
         if ($product !== null) {
             $monitor = Mage::getSingleton('baua/monitor');
-            $monitor->setAction('detail');
+            if( preg_match('/checkout\/cart/', Mage::helper('core/url')->getCurrentUrl()) === 0){
+                $monitor->setAction('detail');
+            }
             $monitor->addProduct($product);
         }
     }
