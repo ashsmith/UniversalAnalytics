@@ -3,10 +3,24 @@
 <?php $order = Mage::getModel('sales/order')->loadByIncrementId(Mage::getSingleton('checkout/session')->getLastRealOrderId()); ?>
 <?php $_helper = Mage::helper('baua') ?>
 <?php $data = Mage::getModel('baua/monitor')->generateTransactionData($order); ?>
+<?php $productArray[] = array(); ?>
+
+<?php foreach ($order->getAllVisibleItems() as $item) :?>
+    <?php $result = Mage::getModel('baua/monitor')->generateProductData($item); ?>
+    <?php if($result != null) : ?>
+        <?php $productArray[] = $this->JS->generateGoogleJS('ec:addProduct', $result) . "\n"; ?>
+    <?php endif; ?>
+<?php endforeach; ?>
+
 
 <?php if($_helper->isActive()): ?>
     <script type="text/javascript">
         <?php echo $this->JS->generateGoogleJS('ec:setAction', 'purchase', $data) . "\n"; ?>
+        <?php foreach($productArray as $product) : ?>
+            <?php if(!is_array($product)) : ?>
+                <?php echo $product; ?>
+            <?php endif; ?>
+        <?php endforeach; ?>
         <?php echo $this->JS->generateGoogleJS('send', 'event', 'purchase', 'Option', '')?>
     </script>
 <?php endif ?>
