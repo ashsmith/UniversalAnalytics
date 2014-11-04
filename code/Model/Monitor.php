@@ -106,8 +106,11 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         if ($product->getVisibility() == 1 ||
             Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId()) ||
-            $listName === str_replace('_', ' ', $compareClass[1])
+            $listName === str_replace('_', ' ', $compareClass[1] )
         ) return;
+
+        $wishlist = Mage::getModel('wishlist/item')->load($product->getId(),'product_id');
+        if($wishlist->getId()) return;
 
         $data             = $this->parseObject($product, 'addImpression');
         $data['list']     = $listName;
