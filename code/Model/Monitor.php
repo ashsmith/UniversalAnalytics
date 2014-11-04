@@ -9,6 +9,8 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     private $productAttributeValueList = Array();
 
+    private $exclusionList = Array();
+
     private $action = null;
 
     private $helper;
@@ -22,6 +24,9 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     public function __construct() {
         $this->helper = Mage::helper('baua');
         $this->JS = Mage::getSingleton('baua/js');
+
+        $this->exclusionList[] = 'Selection';
+        $this->exclusionList[] = $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection());
     }
 
     public function generateProductImpressions() {
@@ -101,11 +106,9 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @param string $listName
      */
     public function addProductImpression($product, $listName) {
-
-
         if ($product->getVisibility() == 1 ||
-            Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId()) ||
-            $listName === "Product Compare Item"
+            $this->isExcludedList($listName) ||
+            Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())
         ) return;
 
         $data             = $this->parseObject($product, 'addImpression');
@@ -127,6 +130,16 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $data = $this->parseObject($banner, 'addPromo');
 
         $this->promoImpressionList['default'][$alias] = array_filter($data, 'strlen');
+    }
+
+    protected function isExcludedList($listName) {
+        $pass = false;
+
+        foreach ($this->exclusionList as $exclusionName) {
+            $pass = ($pass || ($listName === $exclusionName));
+        }
+
+        return $pass;
     }
 
     protected function parseObject($object, $translationName) {
