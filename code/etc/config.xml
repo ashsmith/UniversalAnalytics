@@ -74,39 +74,36 @@
                 <enabled>0</enabled>
             </settings>
             <translation>
-		<addImpression>
-		    <id>entity_id</id>
-		    <name>name</name>
-		    <!-- list -->
+                <addImpression>
+                    <id>entity_id</id>
+                    <name>name</name>
+                    <!-- list -->
                     <brand>manufacturer</brand>
                     <category>category_collection</category>
-		    <variant>color</variant>
-		    <!-- position -->
-		    <price>
-			<specialPrice/>
-			<price/>
-		    </price>
-		</addImpression>
+                    <variant>color</variant>
+                    <!-- position -->
+                    <price>
+                    <specialPrice/>
+                    <price/>
+                    </price>
+                </addImpression>
 
-		<addPromo>
-		    <id>banner_id</id>
-		    <name>name</name>
-		</addPromo>
-
+                <addPromo>
+                    <id>banner_id</id>
+                    <name>name</name>
+                </addPromo>
                 <addProduct>
                     <id>entity_id</id>
                     <name>name</name>
-		    <category>category_collection</category>
+                    <category>category_collection</category>
                     <brand>manufacturer</brand>
                     <price>
-			<specialPrice/>
-			<price/>
-		    </price>
+                    <specialPrice/>
+                    <price/>
+                    </price>
                     <qty>qty</qty>
                     <cart_qty>cart_qty</cart_qty>
-                    <type_id>type_id</type_id>
                 </addProduct>
-
                 <removeproduct>
                     <product_id>id</product_id>
                     <sku>sku</sku>
