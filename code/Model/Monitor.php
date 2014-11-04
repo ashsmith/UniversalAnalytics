@@ -9,6 +9,8 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     private $productAttributeValueList = Array();
 
+    private $exclusionList = Array();
+
     private $action = null;
 
     private $helper;
@@ -22,6 +24,9 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     public function __construct() {
         $this->helper = Mage::helper('baua');
         $this->JS = Mage::getSingleton('baua/js');
+
+        $this->exclusionList[] = 'Selection';
+        $this->exclusionList[] = $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection());
     }
 
     public function generateProductImpressions() {
@@ -101,32 +106,61 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @param string $listName
      */
     public function addProductImpression($product, $listName) {
-
-
         if ($product->getVisibility() == 1 ||
-            Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId()) ||
-            $listName === "Product Compare Item"
+            $this->isExcludedList($listName) ||
+            Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())
         ) return;
+
+        $productUrl = $product->getProductUrl();
+        $oldData    = Array();
+
+        if (isset($this->productImpressionList[$listName][$productUrl])) {
+            $oldData = $this->productImpressionList[$listName][$productUrl];
+        }
 
         $data             = $this->parseObject($product, 'addImpression');
         $data['list']     = $listName;
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
 
+        $data = array_merge($data, $oldData);
+
         $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
     }
 
     public function addProduct($product, $listName = 'Detail') {
+        $wishlist = Mage::getModel('wishlist/item')->load($product->getId(),'product_id');
+        if($wishlist->getId()) return;
+
+        $productUrl = $product->getProductUrl();
+        $oldData    = Array();
+
+        if (isset($this->productImpressionList[$listName][$productUrl])) {
+            $oldData = $this->productImpressionList[$listName][$productUrl];
+        }
+
         $data             = $this->parseObject($product, 'addProduct');
         $data['list']     = $listName;
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
 
-        $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
+        $data = array_merge($data, $oldData);
+
+        $this->productImpressionList[$listName][$productUrl] = array_filter($data, 'strlen');
     }
 
     public function addPromoImpression($banner, $alias) {
         $data = $this->parseObject($banner, 'addPromo');
 
         $this->promoImpressionList['default'][$alias] = array_filter($data, 'strlen');
+    }
+
+    protected function isExcludedList($listName) {
+        $pass = false;
+
+        foreach ($this->exclusionList as $exclusionName) {
+            $pass = ($pass || ($listName === $exclusionName));
+        }
+
+        return $pass;
     }
 
     protected function parseObject($object, $translationName) {

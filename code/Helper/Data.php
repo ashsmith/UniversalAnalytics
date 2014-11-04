@@ -36,6 +36,18 @@ class BlueAcorn_UniversalAnalytics_Helper_Data extends Mage_Core_Helper_Abstract
         return $monitor->getAction();
     }
 
+
+    public function getCollectionListName($collectionObject) {
+        $listName = null;
+
+        preg_match('/Resource_(.*)_Collection/', get_class($collectionObject), $listName);
+        if (is_array($listName) && count($listName) >= 2) {
+            $listName = str_replace('_', ' ', $listName[1]);
+        }
+
+        return $listName;
+    }
+
     /**
      * Get translation values from Config Defaults
      * @param $part
