@@ -128,6 +128,9 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     public function addProduct($product, $listName = 'Detail') {
+        $wishlist = Mage::getModel('wishlist/item')->load($product->getId(),'product_id');
+        if($wishlist->getId()) return;
+
         $productUrl = $product->getProductUrl();
         $oldData    = Array();
 
