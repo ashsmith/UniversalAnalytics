@@ -111,19 +111,37 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())
         ) return;
 
+        $productUrl = $product->getProductUrl();
+        $oldData    = Array();
+
+        if (isset($this->productImpressionList[$listName][$productUrl])) {
+            $oldData = $this->productImpressionList[$listName][$productUrl];
+        }
+
         $data             = $this->parseObject($product, 'addImpression');
         $data['list']     = $listName;
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
+
+        $data = array_merge($data, $oldData);
 
         $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
     }
 
     public function addProduct($product, $listName = 'Detail') {
+        $productUrl = $product->getProductUrl();
+        $oldData    = Array();
+
+        if (isset($this->productImpressionList[$listName][$productUrl])) {
+            $oldData = $this->productImpressionList[$listName][$productUrl];
+        }
+
         $data             = $this->parseObject($product, 'addProduct');
         $data['list']     = $listName;
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
 
-        $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
+        $data = array_merge($data, $oldData);
+
+        $this->productImpressionList[$listName][$productUrl] = array_filter($data, 'strlen');
     }
 
     public function addPromoImpression($banner, $alias) {
