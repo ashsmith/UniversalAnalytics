@@ -102,15 +102,11 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      */
     public function addProductImpression($product, $listName) {
 
-        preg_match('/Resource_(.*)_Collection/', get_class(Mage::helper('catalog/product_compare')->getItemCollection()), $compareClass);
 
         if ($product->getVisibility() == 1 ||
             Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId()) ||
-            $listName === str_replace('_', ' ', $compareClass[1] )
+            $listName === "Product Compare Item"
         ) return;
-
-        $wishlist = Mage::getModel('wishlist/item')->load($product->getId(),'product_id');
-        if($wishlist->getId()) return;
 
         $data             = $this->parseObject($product, 'addImpression');
         $data['list']     = $listName;
@@ -193,8 +189,8 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 $urlList[] = $url;
 
                 $product = $this->JS->generateGoogleJS('ec:addProduct', $item);
-                $action = $this->JS->generateGoogleJS('ec:setAction', 'click');
-                $send = $this->JS->generateGoogleJS('send', 'event', $listName, 'click', '');
+                $action = $this->JS->generateGoogleJS('ec:setAction', 'click', json_encode(array('list'=>$listName)));
+                $send = $this->JS->generateGoogleJS('send', 'event', $listName, 'click');
 
                 $text .= $this->JS->attachForeachObserve('a[href="' . $url . '"]', $product . $action . $send);
 
