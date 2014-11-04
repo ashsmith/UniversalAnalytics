@@ -12,6 +12,7 @@
 
          ga('create', '<?php echo Mage::getStoreConfig("google/analytics/account") ?>','auto');
          ga('require', 'ec');
+         ga('require', 'displayfeatures');
 
          <?php echo $helper->generateProductImpressions() ?>
          <?php echo $helper->generatePromoImpressions() ?>

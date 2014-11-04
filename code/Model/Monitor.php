@@ -102,7 +102,15 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      */
     public function addProductImpression($product, $listName) {
 
-        if ($product->getVisibility() == 1 || Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) return;
+        preg_match('/Resource_(.*)_Collection/', get_class(Mage::helper('catalog/product_compare')->getItemCollection()), $compareClass);
+
+        if ($product->getVisibility() == 1 ||
+            Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId()) ||
+            $listName === str_replace('_', ' ', $compareClass[1] )
+        ) return;
+
+        $wishlist = Mage::getModel('wishlist/item')->load($product->getId(),'product_id');
+        if($wishlist->getId()) return;
 
         $data             = $this->parseObject($product, 'addImpression');
         $data['list']     = $listName;

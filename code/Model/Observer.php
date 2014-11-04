@@ -21,6 +21,8 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
     public function viewProduct($observer) {
         $product = $observer->getProduct();
 
+        if ($product->getVisibility() == 1) return null;
+
         if ($product !== null) {
             $monitor = Mage::getSingleton('baua/monitor');
             if( preg_match('/checkout\/cart/', Mage::helper('core/url')->getCurrentUrl()) === 0){
