@@ -2,15 +2,17 @@
 
 class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observer {
 
+    public function __construct() {
+        $this->monitor = Mage::getSingleton('baua/monitor');
+        $this->helper  = Mage::helper('baua');
+    }
     
     public function viewProductCollection($observer) {
         $collection   = $observer->getCollection();
-        $monitor      = Mage::getSingleton('baua/monitor');
-        $this->helper = Mage::helper('baua');
         $listName     = $this->helper->getCollectionListName($collection);
 
         foreach ($collection as $product) {
-            $monitor->addProductImpression($product, $listName);
+            $this->monitor->addProductImpression($product, $listName);
         }
     }
 
@@ -21,22 +23,19 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         if ($product->getVisibility() == 1) return null;
 
         if ($product !== null) {
-            $monitor = Mage::getSingleton('baua/monitor');
-
             if( preg_match('/' . $product->getUrlKey() . '/', Mage::helper('core/url')->getCurrentUrl())){
-                $monitor->setAction('detail');
+                $this->monitor->setAction('detail');
             }
 
-            $monitor->addProduct($product);
+            $this->monitor->addProduct($product);
         }
     }
 
     public function viewPage($observer) {
-        $monitor = Mage::getSingleton('baua/monitor');
         $cartItems = Mage::getModel('checkout/cart')->getQuote()->getAllItems();
 
         foreach ($cartItems as $item) {
-            $monitor->addQuoteProduct($item);
+            $this->monitor->addQuoteProduct($item);
         }
     }
 
@@ -45,7 +44,6 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         $className = get_class($block);
 
         if ($className == 'Enterprise_Banner_Block_Widget_Banner') {
-            $monitor = Mage::getSingleton('baua/monitor');
             $alias = $block->getBlockAlias();
             $transport = $observer->getTransport();
             $html = $transport->getHtml();
@@ -54,7 +52,7 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
 
             foreach ($block->getBannerIds() as $id) {
                 $banner = Mage::getModel('enterprise_banner/banner')->load($id);
-                $monitor->addPromoImpression($banner, $alias);
+                $this->monitor->addPromoImpression($banner, $alias);
             }
         }
     }
