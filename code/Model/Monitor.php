@@ -96,10 +96,10 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         if ($product->getVisibility() == 1) return null;
 
-        $data        = $this->parseObject($product, 'addProduct');
-        $data['qty'] = $item->getQty();
+        $productData = $this->parseObject($product, 'addProduct');
+        $itemData    = $this->parseObject($item, 'addProduct');
 
-        return $data;
+        return array_merge($productData, $itemData);
     }
 
     /**
