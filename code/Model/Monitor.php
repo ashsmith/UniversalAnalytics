@@ -25,8 +25,12 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $this->helper = Mage::helper('baua');
         $this->JS = Mage::getSingleton('baua/js');
 
-        $this->exclusionList[] = 'Selection';
-        $this->exclusionList[] = $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection());
+        $this->exclusionList = Array (
+            'Selection',
+            $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection()),
+            'Product Type Configurable Product',
+            'Product Link Product',
+        );
     }
 
     public function generateProductImpressions() {
