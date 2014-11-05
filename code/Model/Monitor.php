@@ -107,9 +107,12 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      */
     public function addProductImpression($product, $listName) {
         if ($product->getVisibility() == 1 ||
-            $this->isExcludedList($listName) ||
-            Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())
+            $this->isExcludedList($listName)
         ) return;
+
+        if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
+            $listName = 'Cart';
+        }
 
         $productUrl = $product->getProductUrl();
         $oldData    = Array();
@@ -128,8 +131,15 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     public function addProduct($product, $listName = 'Detail') {
-        $wishlist = Mage::getModel('wishlist/item')->load($product->getId(),'product_id');
-        if($wishlist->getId()) return;
+        $wishlist = Mage::helper('wishlist')->getWishlistItemCollection();
+
+        foreach ($wishlist as $wishlistItem) {
+            if ($product->getId() == $wishlistItem->getProduct()->getId()) return;
+        }
+
+        if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
+            $listName = 'Cart';
+        }
 
         $productUrl = $product->getProductUrl();
         $oldData    = Array();
@@ -186,7 +196,9 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         foreach ($list as $listName => $listItem) {
             $newAction = ($listName == "Detail") ? 'ec:addProduct' : $action;
             foreach ($listItem as $item) {
-                $impressionList .= $this->JS->generateGoogleJS($newAction, $item);
+                if ($listName !== 'Cart') {
+                    $impressionList .= $this->JS->generateGoogleJS($newAction, $item);
+                }
             }
         }
 
