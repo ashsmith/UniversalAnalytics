@@ -101,8 +101,7 @@
                         <specialPrice/>
                         <price/>
                     </price>
-                    <qty>qty</qty>
-                    <cart_qty>cart_qty</cart_qty>
+                    <quantity>qty</quantity>
                 </addProduct>
                 <removeproduct>
                     <product_id>id</product_id>
