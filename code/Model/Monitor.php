@@ -136,7 +136,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $wishlist = Mage::helper('wishlist')->getWishlistItemCollection();
 
         foreach ($wishlist as $wishlistItem) {
-            if ($product->getId() == $wishlistItem->getProduct()->getId()) return;
+            if ($product->getId() == $wishlistItem->getProductId()) return;
         }
 
         if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
