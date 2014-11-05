@@ -28,6 +28,16 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
             }
 
             $this->monitor->addProduct($product);
+
+            // Also add all associated products if this is a grouped
+            // product
+            if ($product->getTypeId() == 'grouped') {
+                $associatedProducts = $product->getTypeInstance(true)->getAssociatedProducts($product);
+
+                foreach ($associatedProducts as $associatedProduct) {
+                    $this->monitor->addProductImpression($associatedProduct, 'Grouped');
+                }
+            }
         }
     }
 
