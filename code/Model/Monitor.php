@@ -129,7 +129,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         $data = array_merge($data, $oldData);
 
-        $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
+        $this->productImpressionList[$listName][$product->getProductUrl()] = $data;
     }
 
     public function addProduct($product, $listName = 'Detail') {
@@ -156,13 +156,13 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         $data = array_merge($data, $oldData);
 
-        $this->productImpressionList[$listName][$productUrl] = array_filter($data, 'strlen');
+        $this->productImpressionList[$listName][$productUrl] = $data;
     }
 
     public function addPromoImpression($banner, $alias) {
         $data = $this->parseObject($banner, 'addPromo');
 
-        $this->promoImpressionList['default'][$alias] = array_filter($data, 'strlen');
+        $this->promoImpressionList['default'][$alias] = $data;
     }
 
     protected function isExcludedList($listName) {
@@ -189,7 +189,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             }
         }
 
-        return $data;
+        return array_filter($data, 'strlen');
     }
 
     protected function generateImpressionJSList($action, $list) {
