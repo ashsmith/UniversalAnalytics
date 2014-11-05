@@ -106,9 +106,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @param string $listName
      */
     public function addProductImpression($product, $listName) {
-        if ($product->getVisibility() == 1 ||
-            $this->isExcludedList($listName)
-        ) return;
+        if ($this->isExcludedList($listName)) return;
 
         if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
             $listName = 'Cart';
