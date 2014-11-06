@@ -25,8 +25,12 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $this->helper = Mage::helper('baua');
         $this->JS = Mage::getSingleton('baua/js');
 
-        $this->exclusionList[] = 'Selection';
-        $this->exclusionList[] = $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection());
+        $this->exclusionList = Array (
+            'Selection',
+            $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection()),
+            'Product Type Configurable Product',
+            'Product Link Product',
+        );
     }
 
     public function generateProductImpressions() {
@@ -92,10 +96,10 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         if ($product->getVisibility() == 1) return null;
 
-        $data        = $this->parseObject($product, 'addProduct');
-        $data['qty'] = $item->getQty();
+        $productData = $this->parseObject($product, 'addProduct');
+        $itemData    = $this->parseObject($item, 'addProduct');
 
-        return $data;
+        return array_merge($productData, $itemData);
     }
 
     /**
@@ -106,10 +110,11 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @param string $listName
      */
     public function addProductImpression($product, $listName) {
-        if ($product->getVisibility() == 1 ||
-            $this->isExcludedList($listName) ||
-            Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())
-        ) return;
+        if ($this->isExcludedList($listName)) return;
+
+        if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
+            $listName = 'Cart';
+        }
 
         $productUrl = $product->getProductUrl();
         $oldData    = Array();
@@ -124,12 +129,19 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         $data = array_merge($data, $oldData);
 
-        $this->productImpressionList[$listName][$product->getProductUrl()] = array_filter($data, 'strlen');
+        $this->productImpressionList[$listName][$product->getProductUrl()] = $data;
     }
 
     public function addProduct($product, $listName = 'Detail') {
-        $wishlist = Mage::getModel('wishlist/item')->load($product->getId(),'product_id');
-        if($wishlist->getId()) return;
+        $wishlist = Mage::helper('wishlist')->getWishlistItemCollection();
+
+        foreach ($wishlist as $wishlistItem) {
+            if ($product->getId() == $wishlistItem->getProductId()) return;
+        }
+
+        if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
+            $listName = 'Cart';
+        }
 
         $productUrl = $product->getProductUrl();
         $oldData    = Array();
@@ -144,13 +156,13 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         $data = array_merge($data, $oldData);
 
-        $this->productImpressionList[$listName][$productUrl] = array_filter($data, 'strlen');
+        $this->productImpressionList[$listName][$productUrl] = $data;
     }
 
     public function addPromoImpression($banner, $alias) {
         $data = $this->parseObject($banner, 'addPromo');
 
-        $this->promoImpressionList['default'][$alias] = array_filter($data, 'strlen');
+        $this->promoImpressionList['default'][$alias] = $data;
     }
 
     protected function isExcludedList($listName) {
@@ -177,7 +189,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             }
         }
 
-        return $data;
+        return array_filter($data, 'strlen');
     }
 
     protected function generateImpressionJSList($action, $list) {
@@ -186,7 +198,9 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         foreach ($list as $listName => $listItem) {
             $newAction = ($listName == "Detail") ? 'ec:addProduct' : $action;
             foreach ($listItem as $item) {
-                $impressionList .= $this->JS->generateGoogleJS($newAction, $item);
+                if ($listName !== 'Cart') {
+                    $impressionList .= $this->JS->generateGoogleJS($newAction, $item);
+                }
             }
         }
 
