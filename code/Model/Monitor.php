@@ -215,7 +215,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 
                 $promoText = $this->JS->generateGoogleJS('ec:addPromo', $promoData);
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'promo_click');
-                $send = $this->JS->generateGoogleJS('send', 'event', 'Promotions', 'click', '');
+                $send = $this->JS->generateGoogleJS('send', 'event', 'Promotions', 'click');
 
                 $text .= $this->JS->attachForeachObserve('*[banner-alias="' . $alias . '"] a', $promoText . $action . $send);
             }
