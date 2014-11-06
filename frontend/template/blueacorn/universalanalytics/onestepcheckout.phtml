@@ -14,6 +14,12 @@
 
     <script type="text/javascript">
 
+        <?php foreach($productArray as $product) : ?>
+            <?php echo $product; ?>
+        <?php endforeach; ?>
+        <?php echo $this->JS->generateGoogleJS('ec:setAction', 'checkout', Array('step' => 1)); ?>
+        <?php echo $this->JS->generateGoogleJS('send', 'pageview'); ?>
+
         /**
 	 * For some reason, magento never actually sets 'login' as a
 	 * step, so we need to basically force it here.
@@ -30,11 +36,29 @@
         */
         checkout.gotoSectionparent = checkout.gotoSection;
         checkout.gotoSection = function(section, reloadProgressBlock) {
-            ga('ec:setAction','checkout', {'step': this.steps.indexOf(this.currentStep)+1, 'label': this.currentStep });
+
+	    if (this.currentStep == 'login') {
+		ga('ec:setAction', 'checkout_option', {
+		    'step': this.steps.indexOf(this.currentStep)+1,
+		    'option': this.method
+                });
+		ga('send', 'event', 'Checkout', 'Option');
+            }
+
+	    if (this.currentStep == 'shipping_method') {
+		ga('ec:setAction', 'checkout_option', {
+		    'step': this.steps.indexOf(this.currentStep)+1,
+		    'option': $(shippingMethod.form).select('input[name="shipping_method"][checked]')[0].value
+                });
+		ga('send', 'event', 'Checkout', 'Option');
+            }
+
+
+            ga('ec:setAction','checkout', {'step': this.steps.indexOf(section)+1, 'label': section });
             <?php foreach($productArray as $product) : ?>
                 <?php echo $product; ?>
             <?php endforeach; ?>
-            <?php echo $this->JS->generateGoogleJS('send', 'event', 'Checkout', 'Option', '')?>
+            <?php echo $this->JS->generateGoogleJS('send', 'pageview')?>
 
             this.gotoSectionparent(section);
         };
