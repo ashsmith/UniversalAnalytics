@@ -266,9 +266,16 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 );
 
                 if ($listName == 'Detail') {
+                    if (isset($this->productImpressionList['Grouped'])) {
+                        $productList = '';
+                        foreach ($this->productImpressionList['Grouped'] as $groupItem) {
+                            $productList .= $this->JS->generateGoogleJS('ec:addProduct', $groupItem);
+                        }
+                    }
+
                     $text .= $this->JS->attachForeachObserve(
                         'form[action*="checkout/cart/add"][action*="product/' . $item['id'] . '"] button.btn-cart',
-                        $product . $action . $send
+                        $product . $productList . $action . $send
                     );
                 }
 
