@@ -24,13 +24,6 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     public function __construct() {
         $this->helper = Mage::helper('baua');
         $this->JS = Mage::getSingleton('baua/js');
-
-        $this->exclusionList = Array (
-            'Selection',
-            $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection()),
-            'Product Type Configurable Product',
-            'Product Link Product',
-        );
     }
 
     public function generateProductImpressions() {
@@ -110,33 +103,22 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @param string $listName
      */
     public function addProductImpression($product, $listName) {
-        if ($this->isExcludedList($listName)) return;
-
-        if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
-            $listName = 'Cart';
-        }
-
-        $productUrl = $product->getProductUrl();
-        $oldData    = Array();
-
-        if (isset($this->productImpressionList[$listName][$productUrl])) {
-            $oldData = $this->productImpressionList[$listName][$productUrl];
-        }
-
-        $data             = $this->parseObject($product, 'addImpression');
-        $data['list']     = $listName;
-        $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
-
-        $data = array_merge($data, $oldData);
-
-        $this->productImpressionList[$listName][$product->getProductUrl()] = $data;
+        $this->addToProductImpressionList($product, $listName, 'addImpression');
     }
 
     public function addProduct($product, $listName = 'Detail') {
-        $wishlist = Mage::helper('wishlist')->getWishlistItemCollection();
+        $this->addToProductImpressionList($product, $listName, 'addProduct');
+    }
 
-        foreach ($wishlist as $wishlistItem) {
-            if ($product->getId() == $wishlistItem->getProductId()) return;
+    protected function addToProductImpressionList($product, $listName, $action) {
+        if ($action !== 'addProduct') {
+            if ($this->isExcludedList($listName)) return;
+
+            $wishlist = Mage::helper('wishlist')->getWishlistItemCollection();
+
+            foreach ($wishlist as $wishlistItem) {
+                if ($product->getId() == $wishlistItem->getProductId()) return;
+            }
         }
 
         if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
@@ -150,7 +132,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             $oldData = $this->productImpressionList[$listName][$productUrl];
         }
 
-        $data             = $this->parseObject($product, 'addProduct');
+        $data             = $this->parseObject($product, $action);
         $data['list']     = $listName;
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
 
@@ -166,6 +148,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     protected function isExcludedList($listName) {
+        $this->generateExclusionList();
         $pass = false;
 
         foreach ($this->exclusionList as $exclusionName) {
@@ -237,7 +220,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 $urlList[] = $url;
 
                 $product = $this->JS->generateGoogleJS('ec:addProduct', $item);
-                $action = $this->JS->generateGoogleJS('ec:setAction', 'click', json_encode(array('list'=>$listName)));
+                $action = $this->JS->generateGoogleJS('ec:setAction', 'click', array('list'=>$listName));
                 $send = $this->JS->generateGoogleJS('send', 'event', $listName, 'click');
 
                 $text .= $this->JS->attachForeachObserve('a[href="' . $url . '"]', $product . $action . $send);
@@ -266,9 +249,16 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 );
 
                 if ($listName == 'Detail') {
+                    $productList = '';
+                    if (isset($this->productImpressionList['Grouped'])) {
+                        foreach ($this->productImpressionList['Grouped'] as $groupItem) {
+                            $productList .= $this->JS->generateGoogleJS('ec:addProduct', $groupItem);
+                        }
+                    }
+
                     $text .= $this->JS->attachForeachObserve(
                         'form[action*="checkout/cart/add"][action*="product/' . $item['id'] . '"] button.btn-cart',
-                        $product . $action . $send
+                        $product . $productList . $action . $send
                     );
                 }
 
@@ -392,5 +382,15 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         return (is_array($options) && count($options) > 0);
     }
 
+    protected function generateExclusionList() {
+        if (count($this->exclusionList) < 1) {
+            $this->exclusionList = Array (
+                'Selection',
+                $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection()),
+                'Product Type Configurable Product',
+                'Product Link Product',
+            );
+        }
+    }
 
 }
