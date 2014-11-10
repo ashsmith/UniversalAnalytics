@@ -1,4 +1,4 @@
-<!--- Universal Analytics Start --->
+<!-- Universal Analytics Order Success -->
 <?php $this->JS = Mage::getSingleton('baua/js'); ?>
 <?php $order = Mage::getModel('sales/order')->loadByIncrementId(Mage::getSingleton('checkout/session')->getLastRealOrderId()); ?>
 <?php $_helper = Mage::helper('baua') ?>
@@ -24,4 +24,4 @@
         <?php echo $this->JS->generateGoogleJS('send', 'pageview')?>
     </script>
 <?php endif ?>
-<!--- Universal Analytics End --->
+<!-- Universal Analytics Order Success End -->
