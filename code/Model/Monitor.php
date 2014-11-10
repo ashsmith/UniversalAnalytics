@@ -103,6 +103,14 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @param string $listName
      */
     public function addProductImpression($product, $listName) {
+        $this->addToProductImpressionList($product, $listName, 'addImpression');
+    }
+
+    public function addProduct($product, $listName = 'Detail') {
+        $this->addToProductImpressionList($product, $listName, 'addProduct');
+    }
+
+    protected function addToProductImpressionList($product, $listName, $action) {
         if ($this->isExcludedList($listName)) return;
 
         $wishlist = Mage::helper('wishlist')->getWishlistItemCollection();
@@ -122,34 +130,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             $oldData = $this->productImpressionList[$listName][$productUrl];
         }
 
-        $data             = $this->parseObject($product, 'addImpression');
-        $data['list']     = $listName;
-        $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
-
-        $data = array_merge($data, $oldData);
-
-        $this->productImpressionList[$listName][$product->getProductUrl()] = $data;
-    }
-
-    public function addProduct($product, $listName = 'Detail') {
-        $wishlist = Mage::helper('wishlist')->getWishlistItemCollection();
-
-        foreach ($wishlist as $wishlistItem) {
-            if ($product->getId() == $wishlistItem->getProductId()) return;
-        }
-
-        if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
-            $listName = 'Cart';
-        }
-
-        $productUrl = $product->getProductUrl();
-        $oldData    = Array();
-
-        if (isset($this->productImpressionList[$listName][$productUrl])) {
-            $oldData = $this->productImpressionList[$listName][$productUrl];
-        }
-
-        $data             = $this->parseObject($product, 'addProduct');
+        $data             = $this->parseObject($product, $action);
         $data['list']     = $listName;
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
 
