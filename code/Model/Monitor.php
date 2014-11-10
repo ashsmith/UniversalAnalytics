@@ -220,7 +220,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 $urlList[] = $url;
 
                 $product = $this->JS->generateGoogleJS('ec:addProduct', $item);
-                $action = $this->JS->generateGoogleJS('ec:setAction', 'click', json_encode(array('list'=>$listName)));
+                $action = $this->JS->generateGoogleJS('ec:setAction', 'click', array('list'=>$listName));
                 $send = $this->JS->generateGoogleJS('send', 'event', $listName, 'click');
 
                 $text .= $this->JS->attachForeachObserve('a[href="' . $url . '"]', $product . $action . $send);
