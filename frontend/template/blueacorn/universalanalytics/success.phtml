@@ -21,7 +21,7 @@
                 <?php echo $product; ?>
             <?php endif; ?>
         <?php endforeach; ?>
-        <?php echo $this->JS->generateGoogleJS('send', 'event', 'purchase', 'Option', '')?>
+        <?php echo $this->JS->generateGoogleJS('send', 'pageview')?>
     </script>
 <?php endif ?>
 <!--- Universal Analytics End --->
