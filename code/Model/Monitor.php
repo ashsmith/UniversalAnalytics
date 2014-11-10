@@ -24,13 +24,6 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     public function __construct() {
         $this->helper = Mage::helper('baua');
         $this->JS = Mage::getSingleton('baua/js');
-
-        $this->exclusionList = Array (
-            'Selection',
-            $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection()),
-            'Product Type Configurable Product',
-            'Product Link Product',
-        );
     }
 
     public function generateProductImpressions() {
@@ -166,6 +159,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     protected function isExcludedList($listName) {
+        $this->generateExclusionList();
         $pass = false;
 
         foreach ($this->exclusionList as $exclusionName) {
@@ -399,5 +393,15 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         return (is_array($options) && count($options) > 0);
     }
 
+    protected function generateExclusionList() {
+        if (count($this->exclusionList) < 1) {
+            $this->exclusionList = Array (
+                'Selection',
+                $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection()),
+                'Product Type Configurable Product',
+                'Product Link Product',
+            );
+        }
+    }
 
 }
