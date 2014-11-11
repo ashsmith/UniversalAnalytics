@@ -27,7 +27,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     public function generateProductImpressions() {
-        return $this->generateImpressionJSList('ec:addImpression', $this->productImpressionList);
+        return $this->generateImpressionJSList('addImpression', $this->productImpressionList);
     }
 
     public function generateProductClickEvents() {
@@ -35,7 +35,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     public function generatePromoImpressions() {
-        return $this->generateImpressionJSList('ec:addPromo', $this->promoImpressionList);
+        return $this->generateImpressionJSList('addPromo', $this->promoImpressionList);
     }
 
     public function generatePromoClickEvents() {
@@ -179,15 +179,29 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $impressionList = '';
 
         foreach ($list as $listName => $listItem) {
-            $newAction = ($listName == "Detail") ? 'ec:addProduct' : $action;
+            $newAction = ($listName == "Detail") ? 'addProduct' : $action;
             foreach ($listItem as $item) {
+                $item = $this->filterObjectArray($item, $newAction);
                 if ($listName !== 'Cart') {
-                    $impressionList .= $this->JS->generateGoogleJS($newAction, $item);
+                    $impressionList .= $this->JS->generateGoogleJS('ec:' . $newAction, $item);
                 }
             }
         }
 
         return $impressionList;
+    }
+
+    protected function filterObjectArray($itemArray, $translationName) {
+        $finalArray = Array();
+        $trans      = $this->helper->getTranslation($translationName);
+
+        foreach ($trans as $googleAttr => $magentoAttr) {
+            if (in_array($googleAttr, array_keys($itemArray))) {
+                $finalArray[$googleAttr] = $itemArray[$googleAttr];
+            }
+        }
+
+        return $finalArray;
     }
 
     protected function generatePromoClickList() {
