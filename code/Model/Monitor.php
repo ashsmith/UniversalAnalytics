@@ -89,8 +89,18 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         if ($product->getVisibility() == 1) return null;
 
-        $productData = $this->parseObject($product, 'addProduct');
-        $itemData    = $this->parseObject($item, 'addProduct');
+        $attributeOptions = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
+        $productData      = $this->parseObject($product, 'addProduct');
+        $itemData         = $this->parseObject($item, 'addProduct');
+        $variantArray     = Array();
+
+        if (in_array('attributes_info', $attributeOptions)) {
+            foreach ($attributeOptions['attributes_info'] as $option) {
+                $variantArray[] = $option['value'];
+            }
+
+            $itemData['variant'] = implode('-', $variantArray);
+        }
 
         return array_merge($productData, $itemData);
     }
