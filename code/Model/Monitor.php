@@ -244,6 +244,19 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 if (in_array($url, $urlList)) break;
                 $urlList[] = $url;
 
+                if (isset($item['option-list']) && $listName == 'Detail') {
+                    $variantArray = Array();
+                    foreach ($item['option-list'] as $optionId) {
+                        $variantArray[] =  '$$(\'select[id="attribute'. $optionId .'"] option:selected\')[0].innerHTML';
+                    }
+
+                    $variantText = '[' . implode(', ', $variantArray) . ']' . '.join("-")';
+
+                    $item['variant'] = new Zend_Json_Expr($variantText);
+                }
+
+                $item = $this->filterObjectArray($item, 'addProduct');
+
                 $product = $this->JS->generateGoogleJS('ec:addProduct', $item);
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'click', array('list'=>$listName));
                 $send = $this->JS->generateGoogleJS('send', 'event', $listName, 'click');
