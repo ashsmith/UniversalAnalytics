@@ -220,7 +220,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         foreach ($this->promoImpressionList as $key => $item) {
             foreach ($item as $alias => $promoData) {
-                
+
                 $promoText = $this->JS->generateGoogleJS('ec:addPromo', $promoData);
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'promo_click');
                 $send = $this->JS->generateGoogleJS('send', 'event', 'Promotions', 'click');
@@ -272,7 +272,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                     foreach ($localQuoteList as $quoteId) {
 
                         $text .= $this->JS->attachForeachObserve(
-                            'a[href*="checkout/cart"][href*="elete/id/' . $quoteId . '"]', 
+                            'a[href*="checkout/cart"][href*="elete/id/' . $quoteId . '"]',
                             $product . $removeAction . $send
                         );
                     }
@@ -282,7 +282,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 $send = $this->JS->generateGoogleJS('send', 'event', 'UX', 'click', 'add to cart');
 
                 $text .= $this->JS->attachForeachObserve(
-                    'button[onClick*="checkout/cart/add"][onClick*="product/' . $item['id'] . '"]', 
+                    'button[onClick*="checkout/cart/add"][onClick*="product/' . $item['id'] . '"]',
                     $product . $action . $send
                 );
 
@@ -319,7 +319,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 $results[] = $quoteId;
             }
         }
-        
+
         return $results;
     }
 
@@ -397,7 +397,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             $names[] = $object->getName();
             $object = $object->getParentCategory();
         }
-        
+
         return implode('/', array_reverse($names));
     }
 
@@ -410,7 +410,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @return bool
      */
     protected function getAttributeValueFromList($attributeCode) {
-        $attributeDetails = Mage::getSingleton("eav/config")->getAttribute("catalog_product", $attributeCode); 
+        $attributeDetails = Mage::getSingleton("eav/config")->getAttribute("catalog_product", $attributeCode);
         $options = $attributeDetails->getSource()->getAllOptions(false);
 
         foreach ($options as $option) {
