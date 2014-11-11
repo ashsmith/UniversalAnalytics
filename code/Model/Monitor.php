@@ -121,6 +121,15 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             }
         }
 
+        if ($product->getTypeID() == 'configurable') {
+            $productAttributeOptions = $product->getTypeInstance(true)->getConfigurableAttributesAsArray($product);
+
+            $attributeOptionList = Array();
+            foreach ($productAttributeOptions as $option) {
+                $attributeOptionList[] = $option['attribute_id'];
+            }
+        }
+
         if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
             $listName = 'Cart';
         }
@@ -135,6 +144,8 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $data             = $this->parseObject($product, $action);
         $data['list']     = $listName;
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
+
+        if (isset($attributeOptionList)) $data['option-list'] = $attributeOptionList;
 
         $data = array_merge($data, $oldData);
 
