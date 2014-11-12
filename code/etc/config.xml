@@ -104,7 +104,10 @@
                         <specialPrice/>
                         <price/>
                     </price>
-                    <quantity>qty</quantity>
+                    <quantity>
+			<qty/>
+			<qty_ordered/>
+		    </quantity>
 		    <list>blank</list>
 		    <position>blank</position>
                 </addProduct>
