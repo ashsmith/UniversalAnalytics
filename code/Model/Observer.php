@@ -18,6 +18,11 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
 
 
     public function viewProduct($observer) {
+
+        if (Mage::registry('baua_observer_lock')) return;
+
+        Mage::register('baua_observer_lock', true);
+
         $product = $observer->getProduct();
 
         if ($product->getVisibility() == 1) return null;
@@ -39,6 +44,8 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
                 }
             }
         }
+
+        Mage::unregister('baua_observer_lock');
     }
 
     public function viewPage($observer) {
