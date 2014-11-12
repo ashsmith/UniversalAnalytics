@@ -86,6 +86,8 @@
                     <specialPrice/>
                     <price/>
                     </price>
+		    <list>blank</list>
+		    <position>blank</position>
                 </addImpression>
 
                 <addPromo>
@@ -97,11 +99,14 @@
                     <name>name</name>
                     <category>category_collection</category>
                     <brand>manufacturer</brand>
+		    <variant>color</variant>
                     <price>
                         <specialPrice/>
                         <price/>
                     </price>
                     <quantity>qty</quantity>
+		    <list>blank</list>
+		    <position>blank</position>
                 </addProduct>
                 <removeproduct>
                     <product_id>id</product_id>

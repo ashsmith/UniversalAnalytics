@@ -34,11 +34,7 @@ class BlueAcorn_UniversalAnalytics_Model_Js {
         $outputList = Array();
 
         foreach ($params as $element) {
-            if (is_array($element)) {
-                $outputList[] = json_encode($element); 
-            } else {
-                $outputList[] = "'" . $element . "'";
-            }
+            $outputList[] = Zend_Json::encode($element, false, array('enableJsonExprFinder' => true));
         }
 
         return "{$name}(" . implode(', ', $outputList) . ");\n";

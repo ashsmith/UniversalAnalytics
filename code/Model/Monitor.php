@@ -27,7 +27,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     public function generateProductImpressions() {
-        return $this->generateImpressionJSList('ec:addImpression', $this->productImpressionList);
+        return $this->generateImpressionJSList('addImpression', $this->productImpressionList);
     }
 
     public function generateProductClickEvents() {
@@ -35,7 +35,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
     }
 
     public function generatePromoImpressions() {
-        return $this->generateImpressionJSList('ec:addPromo', $this->promoImpressionList);
+        return $this->generateImpressionJSList('addPromo', $this->promoImpressionList);
     }
 
     public function generatePromoClickEvents() {
@@ -89,8 +89,18 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         if ($product->getVisibility() == 1) return null;
 
-        $productData = $this->parseObject($product, 'addProduct');
-        $itemData    = $this->parseObject($item, 'addProduct');
+        $attributeOptions = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
+        $productData      = $this->parseObject($product, 'addProduct');
+        $itemData         = $this->parseObject($item, 'addProduct');
+        $variantArray     = Array();
+
+        if (in_array('attributes_info', $attributeOptions)) {
+            foreach ($attributeOptions['attributes_info'] as $option) {
+                $variantArray[] = $option['value'];
+            }
+
+            $itemData['variant'] = implode('-', $variantArray);
+        }
 
         return array_merge($productData, $itemData);
     }
@@ -121,6 +131,15 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             }
         }
 
+        if ($product->getTypeID() == 'configurable') {
+            $productAttributeOptions = $product->getTypeInstance(true)->getConfigurableAttributesAsArray($product);
+
+            $attributeOptionList = Array();
+            foreach ($productAttributeOptions as $option) {
+                $attributeOptionList[] = $option['attribute_id'];
+            }
+        }
+
         if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
             $listName = 'Cart';
         }
@@ -135,6 +154,8 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $data             = $this->parseObject($product, $action);
         $data['list']     = $listName;
         $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
+
+        if (isset($attributeOptionList)) $data['option-list'] = $attributeOptionList;
 
         $data = array_merge($data, $oldData);
 
@@ -179,10 +200,11 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $impressionList = '';
 
         foreach ($list as $listName => $listItem) {
-            $newAction = ($listName == "Detail") ? 'ec:addProduct' : $action;
+            $newAction = ($listName == "Detail") ? 'addProduct' : $action;
             foreach ($listItem as $item) {
+                $item = $this->filterObjectArray($item, $newAction);
                 if ($listName !== 'Cart') {
-                    $impressionList .= $this->JS->generateGoogleJS($newAction, $item);
+                    $impressionList .= $this->JS->generateGoogleJS('ec:' . $newAction, $item);
                 }
             }
         }
@@ -190,12 +212,25 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         return $impressionList;
     }
 
+    protected function filterObjectArray($itemArray, $translationName) {
+        $finalArray = Array();
+        $trans      = $this->helper->getTranslation($translationName);
+
+        foreach ($trans as $googleAttr => $magentoAttr) {
+            if (in_array($googleAttr, array_keys($itemArray))) {
+                $finalArray[$googleAttr] = $itemArray[$googleAttr];
+            }
+        }
+
+        return $finalArray;
+    }
+
     protected function generatePromoClickList() {
         $text = '';
 
         foreach ($this->promoImpressionList as $key => $item) {
             foreach ($item as $alias => $promoData) {
-                
+
                 $promoText = $this->JS->generateGoogleJS('ec:addPromo', $promoData);
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'promo_click');
                 $send = $this->JS->generateGoogleJS('send', 'event', 'Promotions', 'click');
@@ -219,6 +254,19 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 if (in_array($url, $urlList)) break;
                 $urlList[] = $url;
 
+                if (isset($item['option-list']) && $listName == 'Detail') {
+                    $variantArray = Array();
+                    foreach ($item['option-list'] as $optionId) {
+                        $variantArray[] =  '$$(\'select[id="attribute'. $optionId .'"] option:selected\')[0].innerHTML';
+                    }
+
+                    $variantText = '[' . implode(', ', $variantArray) . ']' . '.join("-")';
+
+                    $item['variant'] = new Zend_Json_Expr($variantText);
+                }
+
+                $item = $this->filterObjectArray($item, 'addProduct');
+
                 $product = $this->JS->generateGoogleJS('ec:addProduct', $item);
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'click', array('list'=>$listName));
                 $send = $this->JS->generateGoogleJS('send', 'event', $listName, 'click');
@@ -234,7 +282,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                     foreach ($localQuoteList as $quoteId) {
 
                         $text .= $this->JS->attachForeachObserve(
-                            'a[href*="checkout/cart"][href*="elete/id/' . $quoteId . '"]', 
+                            'a[href*="checkout/cart"][href*="elete/id/' . $quoteId . '"]',
                             $product . $removeAction . $send
                         );
                     }
@@ -244,7 +292,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 $send = $this->JS->generateGoogleJS('send', 'event', 'UX', 'click', 'add to cart');
 
                 $text .= $this->JS->attachForeachObserve(
-                    'button[onClick*="checkout/cart/add"][onClick*="product/' . $item['id'] . '"]', 
+                    'button[onClick*="checkout/cart/add"][onClick*="product/' . $item['id'] . '"]',
                     $product . $action . $send
                 );
 
@@ -281,7 +329,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 $results[] = $quoteId;
             }
         }
-        
+
         return $results;
     }
 
@@ -359,7 +407,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             $names[] = $object->getName();
             $object = $object->getParentCategory();
         }
-        
+
         return implode('/', array_reverse($names));
     }
 
@@ -372,7 +420,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      * @return bool
      */
     protected function getAttributeValueFromList($attributeCode) {
-        $attributeDetails = Mage::getSingleton("eav/config")->getAttribute("catalog_product", $attributeCode); 
+        $attributeDetails = Mage::getSingleton("eav/config")->getAttribute("catalog_product", $attributeCode);
         $options = $attributeDetails->getSource()->getAllOptions(false);
 
         foreach ($options as $option) {
