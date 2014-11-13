@@ -15,12 +15,12 @@
 
 <?php if($_helper->isActive()): ?>
     <script type="text/javascript">
-        <?php echo $this->JS->generateGoogleJS('ec:setAction', 'purchase', $data) . "\n"; ?>
         <?php foreach($productArray as $product) : ?>
             <?php if(!is_array($product)) : ?>
                 <?php echo $product; ?>
             <?php endif; ?>
         <?php endforeach; ?>
+        <?php echo $this->JS->generateGoogleJS('ec:setAction', 'purchase', $data) . "\n"; ?>
         <?php echo $this->JS->generateGoogleJS('send', 'pageview')?>
     </script>
 <?php endif ?>
