@@ -290,10 +290,12 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'add');
                 $send = $this->JS->generateGoogleJS('send', 'event', 'UX', 'click', 'add to cart');
+                $currency = $this->JS->generateGoogleJS('set', '&cu', Mage::app()->getStore()->getCurrentCurrencyCode());
+
 
                 $text .= $this->JS->attachForeachObserve(
                     'button[onClick*="checkout/cart/add"][onClick*="product/' . $item['id'] . '"]',
-                    $product . $action . $send
+                    $currency . $product . $action . $send
                 );
 
                 if ($listName == 'Detail') {
@@ -306,7 +308,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
                     $text .= $this->JS->attachForeachObserve(
                         'form[action*="checkout/cart/add"][action*="product/' . $item['id'] . '"] button.btn-cart',
-                        $product . $productList . $action . $send
+                        $currency . $product . $productList . $action . $send
                     );
                 }
 
