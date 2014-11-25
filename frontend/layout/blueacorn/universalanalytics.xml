@@ -18,6 +18,11 @@
                 <alias>google_analytics</alias>
             </action>
         </reference>
+        <reference name="after_body_start">
+            <action method="unsetChild" ifconfig="google/baua/active">
+                <alias>google_analytics</alias>
+            </action>
+        </reference>
     </default>
     <checkout_onepage_index>
         <reference name="footer" before="-">
