@@ -188,12 +188,26 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
 
             foreach ($attributeList as $subAttribute) {
-                $data[$googleAttr] = $this->findAttributeValue($object, $subAttribute);
+                $value = $this->findAttributeValue($object, $subAttribute);
+
+                if ($googleAttr == 'price') {
+                    $value = $this->convertPrice($value);
+                }
+
+                $data[$googleAttr] = $value;
+
                 if ($data[$googleAttr] !== null) break;
             }
         }
 
         return array_filter($data, 'strlen');
+    }
+
+    protected function convertPrice($value) {
+        $baseCurrencyCode    = Mage::app()->getStore()->getBaseCurrencyCode();
+        $currentCurrencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
+
+        return (string)Mage::helper('directory')->currencyConvert($value, $baseCurrencyCode, $currentCurrencyCode);
     }
 
     protected function generateImpressionJSList($action, $list) {
@@ -290,10 +304,12 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
                 $action = $this->JS->generateGoogleJS('ec:setAction', 'add');
                 $send = $this->JS->generateGoogleJS('send', 'event', 'UX', 'click', 'add to cart');
+                $currency = $this->JS->generateGoogleJS('set', '&cu', Mage::app()->getStore()->getCurrentCurrencyCode());
+
 
                 $text .= $this->JS->attachForeachObserve(
                     'button[onClick*="checkout/cart/add"][onClick*="product/' . $item['id'] . '"]',
-                    $product . $action . $send
+                    $currency . $product . $action . $send
                 );
 
                 if ($listName == 'Detail') {
@@ -306,7 +322,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
                     $text .= $this->JS->attachForeachObserve(
                         'form[action*="checkout/cart/add"][action*="product/' . $item['id'] . '"] button.btn-cart',
-                        $product . $productList . $action . $send
+                        $currency . $product . $productList . $action . $send
                     );
                 }
 
