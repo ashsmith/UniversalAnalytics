@@ -452,7 +452,6 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 'Selection',
                 $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection()),
                 'Product Type Configurable Product',
-                'Product Link Product',
             );
         }
     }
