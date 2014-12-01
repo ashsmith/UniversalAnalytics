@@ -140,10 +140,6 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             }
         }
 
-        if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
-            $listName = 'Cart';
-        }
-
         $productUrl = $product->getProductUrl();
         $oldData    = Array();
 
@@ -158,6 +154,10 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         if (isset($attributeOptionList)) $data['option-list'] = $attributeOptionList;
 
         $data = array_merge($data, $oldData);
+
+        if (Mage::getSingleton('checkout/session')->getQuote()->hasProductId($product->getId())) {
+            $data['hide-impression'] = true;
+        }
 
         $this->productImpressionList[$listName][$productUrl] = $data;
     }
@@ -216,8 +216,8 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         foreach ($list as $listName => $listItem) {
             $newAction = ($listName == "Detail") ? 'addProduct' : $action;
             foreach ($listItem as $item) {
-                $item = $this->filterObjectArray($item, $newAction);
-                if ($listName !== 'Cart') {
+                if (!isset($item['hide-impression'])) {
+                    $item = $this->filterObjectArray($item, $newAction);
                     $impressionList .= $this->JS->generateGoogleJS('ec:' . $newAction, $item);
                 }
             }
