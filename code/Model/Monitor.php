@@ -188,15 +188,15 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             $attributeList = (is_array($magentoAttr)) ? array_keys($magentoAttr) : Array($magentoAttr);
 
             foreach ($attributeList as $subAttribute) {
-                $value = $this->findAttributeValue($object, $subAttribute);
+                $data[$googleAttr] = $this->findAttributeValue($object, $subAttribute);
 
-                if ($googleAttr == 'price') {
-                    $value = $this->convertPrice($value);
+                if ($data[$googleAttr] !== null) {
+                    if ($googleAttr == 'price') {
+                        $data[$googleAttr] = $this->convertPrice($data[$googleAttr]);
+                    }
+
+                    break;
                 }
-
-                $data[$googleAttr] = $value;
-
-                if ($data[$googleAttr] !== null) break;
             }
         }
 
@@ -452,7 +452,6 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                 'Selection',
                 $this->helper->getCollectionListName(Mage::helper('catalog/product_compare')->getItemCollection()),
                 'Product Type Configurable Product',
-                'Product Link Product',
             );
         }
     }
