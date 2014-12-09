@@ -337,11 +337,11 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $this->quoteList[$item->getId()] = $product->getId();
     }
 
-    protected function findQuoteProduct($id) {
+    protected function findQuoteProduct($productId) {
         $results = Array();
 
-        foreach ($this->quoteList as $quoteId => $productId) {
-            if ($id == $productId) {
+        foreach ($this->quoteList as $quoteId => $quoteProductId) {
+            if ($productId == $quoteProductId) {
                 $results[] = $quoteId;
             }
         }
@@ -416,7 +416,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
      */
     protected function parseCategoryValue($objectCollection) {
         $objectCollection->addAttributeToSelect('name');
-        $object = $objectCollection->getFirstItem();
+        $object = $objectCollection->limit(1)->getFirstItem();
         $names = Array();
 
         while ($object->getLevel() > 0) {
