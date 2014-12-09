@@ -56,7 +56,7 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         }
     }
 
-    public function viewPromotion($observer) {
+    public function viewPromotion($observer, $extra) {
         $block = $observer->getBlock();
         $className = get_class($block);
 
