@@ -7,10 +7,11 @@
 -->
 <layout version="0.1.0">
     <default>
-        <reference name="footer" before="-">
+        <reference name="before_body_end" before="-">
             <block type="core/text_list" name="universalanalytics" as="universalanalytics" after="-">
                 <block type="core/template" name="universalanalytics_sitewide" as="universalanalytics_sitewide"
-                       template="blueacorn/universalanalytics/sitewideJs.phtml"/>
+                       template="blueacorn/universalanalytics/sitewideJs.phtml">
+		</block>
             </block>
         </reference>
         <reference name="head" before="-">
@@ -25,13 +26,17 @@
         </reference>
     </default>
     <checkout_onepage_index>
-        <reference name="footer" before="-">
+        <reference name="before_body_end" before="-">
             <block type="core/template" name="universalanalytics_checkout" as="universalanalytics_checkout"
-                template="blueacorn/universalanalytics/onestepcheckout.phtml"/>
+                template="blueacorn/universalanalytics/onestepcheckout.phtml">
+		<action method="setCacheLifetime">
+		    <time>null</time>
+		</action>
+	    </block>
         </reference>
     </checkout_onepage_index>
     <checkout_onepage_success>
-        <reference name="footer" before="-">
+        <reference name="before_body_end" before="-">
             <block type="core/template" name="universalanalytics_success" as="universalanalytics_success"
                    template="blueacorn/universalanalytics/success.phtml"/>
         </reference>
