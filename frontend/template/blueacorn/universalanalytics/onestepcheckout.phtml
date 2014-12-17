@@ -60,6 +60,11 @@
             <?php endforeach; ?>
             <?php echo $this->JS->generateGoogleJS('send', 'pageview')?>
 
+            // Older versions of Magento are completely lacking the
+            // currentStep variable, so we're re-implementing some of
+            // that functionality here.
+            this.currentStep = section;
+
             this.gotoSectionparent(section);
         };
     </script>
