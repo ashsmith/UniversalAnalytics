@@ -212,11 +212,13 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     protected function generateImpressionJSList($action, $list) {
         $impressionList = '';
+        $impressedList = Array();
 
         foreach ($list as $listName => $listItem) {
             $newAction = ($listName == "Detail") ? 'addProduct' : $action;
             foreach ($listItem as $item) {
-                if (!isset($item['hide-impression'])) {
+                if ( (!isset($item['hide-impression']) || ($listName == 'Detail')) && !in_array($item['id'], $impressedList)) {
+                    $impressedList[] = $item['id'];
                     $item = $this->filterObjectArray($item, $newAction);
                     $impressionList .= $this->JS->generateGoogleJS('ec:' . $newAction, $item);
                 }
