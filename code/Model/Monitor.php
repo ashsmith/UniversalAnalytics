@@ -149,7 +149,6 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         $data             = $this->parseObject($product, $action);
         $data['list']     = $listName;
-        $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
 
         if (isset($attributeOptionList)) $data['option-list'] = $attributeOptionList;
 
@@ -216,9 +215,14 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         foreach ($list as $listName => $listItem) {
             $newAction = ($listName == "Detail") ? 'addProduct' : $action;
+            $position = 1;
             foreach ($listItem as $item) {
                 if ( (!isset($item['hide-impression']) || ($listName == 'Detail')) && !in_array($item['id'], $impressedList)) {
                     $impressedList[] = $item['id'];
+                    // We may need to deal with promo positions here
+                    // at a later point, but for now this field gets
+                    // filtered out.
+                    $item['position'] = $position++;
                     $item = $this->filterObjectArray($item, $newAction);
                     $impressionList .= $this->JS->generateGoogleJS('ec:' . $newAction, $item);
                 }
