@@ -46,11 +46,14 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         if ($product->getVisibility() == 1) return null;
 
         if ($product !== null) {
+            $list = 'Single';
+
             if( preg_match('/' . $product->getUrlKey() . '/', Mage::helper('core/url')->getCurrentUrl())){
                 $this->monitor->setAction('detail');
+                $list = 'Detail';
             }
 
-            $this->monitor->addProduct($product);
+            $this->monitor->addProduct($product, $list);
 
             // Also add all associated products if this is a grouped
             // product
