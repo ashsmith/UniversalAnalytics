@@ -89,18 +89,12 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         if ($product->getVisibility() == 1) return null;
 
-        $attributeOptions = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
+        $productOptions = $item->getProductOptions();
+        $orderOptions = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
+
         $productData      = $this->parseObject($product, 'addProduct');
         $itemData         = $this->parseObject($item, 'addProduct');
-        $variantArray     = Array();
-
-        if (in_array('attributes_info', $attributeOptions)) {
-            foreach ($attributeOptions['attributes_info'] as $option) {
-                $variantArray[] = $option['value'];
-            }
-
-            $itemData['variant'] = implode('-', $variantArray);
-        }
+        $itemData['variant'] = $this->extractAttributes($productOptions, $orderOptions);
 
         return array_merge($productData, $itemData);
     }
@@ -118,6 +112,24 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     public function addProduct($product, $listName = 'Detail') {
         $this->addToProductImpressionList($product, $listName, 'addProduct');
+    }
+
+    protected function extractAttributes($attributesInfo) {
+        $params = func_get_args();
+        $variantArray = Array();
+
+        foreach ($params as $attributeInfo) {
+
+            if ( is_array($attributeInfo) && in_array('attributes_info', $attributeInfo)) {
+                foreach ($attributeInfo['attributes_info'] as $option) {
+                    $variantArray[] = $option['value'];
+                }
+            }
+        }
+
+        $variant = implode('-', $variantArray);
+
+        return $variant;
     }
 
     protected function addToProductImpressionList($product, $listName, $action) {
