@@ -114,7 +114,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $this->addToProductImpressionList($product, $listName, 'addProduct');
     }
 
-    protected function extractAttributes($attributesInfo) {
+    protected function extractAttributes($attributeInfo) {
         $params = func_get_args();
         $variantArray = Array();
 
