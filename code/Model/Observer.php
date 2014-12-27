@@ -2,37 +2,58 @@
 
 class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observer {
 
+    const registryName = 'baua_observer_lock_';
+
     public function __construct() {
         $this->monitor = Mage::getSingleton('baua/monitor');
         $this->helper  = Mage::helper('baua');
     }
+
+    protected function lockObserver($name) {
+        $registryName = self::registryName . $name;
+
+        if (Mage::registry($registryName)) return true;
+
+        Mage::register($registryName, true);
+
+        return false;
+    }
+
+    protected function unlockObserver($name) {
+        $registryName = self::registryName . $name;
+        Mage::unregister($registryName);
+    }
     
     public function viewProductCollection($observer) {
+        if ($this->lockObserver('collection')) return;
+
         $collection   = $observer->getCollection();
         $listName     = $this->helper->getCollectionListName($collection);
 
         foreach ($collection as $product) {
             $this->monitor->addProductImpression($product, $listName);
         }
+
+        $this->unlockObserver('collection');
     }
 
 
     public function viewProduct($observer) {
-
-        if (Mage::registry('baua_observer_lock')) return;
-
-        Mage::register('baua_observer_lock', true);
+        if ($this->lockObserver('product')) return;
 
         $product = $observer->getProduct();
 
         if ($product->getVisibility() == 1) return null;
 
         if ($product !== null) {
+            $list = 'Single';
+
             if( preg_match('/' . $product->getUrlKey() . '/', Mage::helper('core/url')->getCurrentUrl())){
                 $this->monitor->setAction('detail');
+                $list = 'Detail';
             }
 
-            $this->monitor->addProduct($product);
+            $this->monitor->addProduct($product, $list);
 
             // Also add all associated products if this is a grouped
             // product
@@ -45,7 +66,7 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
             }
         }
 
-        Mage::unregister('baua_observer_lock');
+        $this->unlockObserver('product');
     }
 
     public function viewPage($observer) {

@@ -89,18 +89,12 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         if ($product->getVisibility() == 1) return null;
 
-        $attributeOptions = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
+        $productOptions = $item->getProductOptions();
+        $orderOptions = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
+
         $productData      = $this->parseObject($product, 'addProduct');
         $itemData         = $this->parseObject($item, 'addProduct');
-        $variantArray     = Array();
-
-        if (in_array('attributes_info', $attributeOptions)) {
-            foreach ($attributeOptions['attributes_info'] as $option) {
-                $variantArray[] = $option['value'];
-            }
-
-            $itemData['variant'] = implode('-', $variantArray);
-        }
+        $itemData['variant'] = $this->extractAttributes($productOptions, $orderOptions);
 
         return array_merge($productData, $itemData);
     }
@@ -118,6 +112,24 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
     public function addProduct($product, $listName = 'Detail') {
         $this->addToProductImpressionList($product, $listName, 'addProduct');
+    }
+
+    protected function extractAttributes($attributeInfo) {
+        $params = func_get_args();
+        $variantArray = Array();
+
+        foreach ($params as $attributeInfo) {
+
+            if ( is_array($attributeInfo) && in_array('attributes_info', $attributeInfo)) {
+                foreach ($attributeInfo['attributes_info'] as $option) {
+                    $variantArray[] = $option['value'];
+                }
+            }
+        }
+
+        $variant = implode('-', $variantArray);
+
+        return $variant;
     }
 
     protected function addToProductImpressionList($product, $listName, $action) {
@@ -149,7 +161,6 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         $data             = $this->parseObject($product, $action);
         $data['list']     = $listName;
-        $data['position'] = isset($this->productImpressionList[$listName]) ? count($this->productImpressionList[$listName]) : '0';
 
         if (isset($attributeOptionList)) $data['option-list'] = $attributeOptionList;
 
@@ -216,9 +227,14 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         foreach ($list as $listName => $listItem) {
             $newAction = ($listName == "Detail") ? 'addProduct' : $action;
+            $position = 1;
             foreach ($listItem as $item) {
                 if ( (!isset($item['hide-impression']) || ($listName == 'Detail')) && !in_array($item['id'], $impressedList)) {
                     $impressedList[] = $item['id'];
+                    // We may need to deal with promo positions here
+                    // at a later point, but for now this field gets
+                    // filtered out.
+                    $item['position'] = $position++;
                     $item = $this->filterObjectArray($item, $newAction);
                     $impressionList .= $this->JS->generateGoogleJS('ec:' . $newAction, $item);
                 }
