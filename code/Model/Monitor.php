@@ -96,7 +96,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         $itemData         = $this->parseObject($item, 'addProduct');
         $itemData['variant'] = $this->extractAttributes($productOptions, $orderOptions);
 
-        return array_merge($productData, $itemData);
+        return array_filter(array_merge($productData, $itemData), 'strlen');
     }
 
     /**
@@ -206,6 +206,9 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                         $newPrice = $this->convertPrice($data[$googleAttr]);
                         $newPrice = Mage::app()->getStore()->roundPrice($newPrice);
                         $data[$googleAttr] = $newPrice;
+                    }
+                    if ($googleAttr == 'quantity') {
+                        $data[$googleAttr] = (int)$data[$googleAttr];
                     }
 
                     break;
