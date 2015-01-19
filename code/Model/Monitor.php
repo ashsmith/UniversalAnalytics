@@ -203,7 +203,9 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
                 if ($data[$googleAttr] !== null) {
                     if ($googleAttr == 'price') {
-                        $data[$googleAttr] = $this->convertPrice($data[$googleAttr]);
+                        $newPrice = $this->convertPrice($data[$googleAttr]);
+                        $newPrice = Mage::app()->getStore()->roundPrice($newPrice);
+                        $data[$googleAttr] = $newPrice;
                     }
 
                     break;
