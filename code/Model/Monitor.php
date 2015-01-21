@@ -120,7 +120,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
         foreach ($params as $attributeInfo) {
 
-            if ( is_array($attributeInfo) && in_array('attributes_info', $attributeInfo)) {
+            if ( is_array($attributeInfo) && in_array('attributes_info', array_keys($attributeInfo), true) ) {
                 foreach ($attributeInfo['attributes_info'] as $option) {
                     $variantArray[] = $option['value'];
                 }
