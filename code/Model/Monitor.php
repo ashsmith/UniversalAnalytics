@@ -205,7 +205,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
                     if ($googleAttr == 'price') {
                         $newPrice = $this->convertPrice($data[$googleAttr]);
                         $newPrice = Mage::app()->getStore()->roundPrice($newPrice);
-                        $data[$googleAttr] = $newPrice;
+                        $data[$googleAttr] = (string)$newPrice;
                     }
                     if ($googleAttr == 'quantity') {
                         $data[$googleAttr] = (int)$data[$googleAttr];
