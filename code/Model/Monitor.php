@@ -388,6 +388,8 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             if ($newValue !== null) break;
         }
 
+        $newValue = str_replace(array("\n", "\t", "\r"), ' ', $newValue);
+
         return $newValue;
     }
 
