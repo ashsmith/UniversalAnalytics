@@ -201,7 +201,7 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
             foreach ($attributeList as $subAttribute) {
                 $data[$googleAttr] = $this->findAttributeValue($object, $subAttribute);
 
-                if ($data[$googleAttr] !== null) {
+                if ( ($data[$googleAttr] !== null) && ($data[$googleAttr] !== '') ) {
                     if ($googleAttr == 'price') {
                         $newPrice = $this->convertPrice($data[$googleAttr]);
                         $newPrice = Mage::app()->getStore()->roundPrice($newPrice);
