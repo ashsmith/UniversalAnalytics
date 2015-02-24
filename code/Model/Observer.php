@@ -9,6 +9,13 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         $this->helper  = Mage::helper('baua');
     }
 
+    /**
+     * Sets a registry entry based on the provided $name.
+     *
+     * @name lockObserver
+     * @param string $name
+     * @return bool
+     */
     protected function lockObserver($name) {
         $registryName = self::registryName . $name;
 
@@ -19,12 +26,28 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         return false;
     }
 
+    /**
+     * Remove registry entry based on the provided $name.
+     *
+     * @name unlockObserver
+     * @param string $name
+     */
     protected function unlockObserver($name) {
         $registryName = self::registryName . $name;
         Mage::unregister($registryName);
     }
     
+    /**
+     * Main entry point when loading a product collection. Generates a
+     * $listName and then passes the products to the monitor to be
+     * added as product impressions.
+     *
+     * @name viewProductCollection
+     * @param observer $observer
+     */
     public function viewProductCollection($observer) {
+        // Lock down this function in order to prevent infinite
+        // recursion loops
         if ($this->lockObserver('collection')) return;
 
         $collection   = $observer->getCollection();
@@ -37,8 +60,18 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         $this->unlockObserver('collection');
     }
 
-
+    /**
+     * Main entry point when loading a single product. Collects
+     * pertinent information before sending product to the monitor to
+     * add a product impression. Has additional logic for handling
+     * grouped products.
+     *
+     * @name viewProduct
+     * @param observer $observer
+     */
     public function viewProduct($observer) {
+        // Lock down this function in order to prevent infinite
+        // recursion loops
         if ($this->lockObserver('product')) return;
 
         $product = $observer->getProduct();
@@ -69,6 +102,13 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         $this->unlockObserver('product');
     }
 
+    /**
+     * Collects quote items in the user's cart and sends them to the
+     * monitor.
+     *
+     * @name viewPage
+     * @param observer $observer
+     */
     public function viewPage($observer) {
         $cartItems = Mage::getModel('checkout/cart')->getQuote()->getAllItems();
 
@@ -77,6 +117,17 @@ class BlueAcorn_UniversalAnalytics_Model_Observer extends Mage_Core_Model_Observ
         }
     }
 
+    /**
+     * Main entry point when loading a promotion. Collects pertinent
+     * information before sending to monitor to add a promo
+     * impression. In order to be able to track promotions via
+     * Javascript, the outputted HTML of the promotion is modified
+     * here to add a 'banner-alias' parameter to the enclosing HTML
+     * node.
+     *
+     * @name viewPromotion
+     * @param observer $observer 
+     */
     public function viewPromotion($observer) {
         $block = $observer->getBlock();
         $className = get_class($block);
