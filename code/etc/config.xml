@@ -77,14 +77,12 @@
                 <addImpression>
                     <id>entity_id</id>
                     <name>name</name>
-                    <!-- list -->
                     <brand>manufacturer</brand>
                     <category>category_collection</category>
                     <variant>color</variant>
-                    <!-- position -->
                     <price>
-                    <specialPrice/>
-                    <price/>
+			<specialPrice/>
+			<price/>
                     </price>
 		    <list>blank</list>
 		    <position>blank</position>
@@ -137,9 +135,7 @@
                     <shipping_amount>shipping</shipping_amount>
                     <coupon_code>coupon</coupon_code>
                     <price_incl_tax>revenue</price_incl_tax>
-                    <!--<grand_total>price</grand_total>-->
                     <items_qty>quantity</items_qty>
-                    <!--<total_item_count>product_count</total_item_count>-->
                     <product_type>product_type</product_type>
                 </capturetransactionitems>
                 <transaction>
