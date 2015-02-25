@@ -13,7 +13,8 @@
          ga('create', '<?php echo Mage::getStoreConfig("google/analytics/account") ?>','auto');
          ga('require', 'ec');
          ga('require', 'displayfeatures');
-         ga('set', '&cu', '<?php echo Mage::app()->getStore()->getCurrentCurrencyCode(); ?>');
+
+         <?php echo $helper->generateCurrencyInit() ?>
 
          <?php echo $helper->generateProductImpressions() ?>
          <?php echo $helper->generatePromoImpressions() ?>

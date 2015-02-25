@@ -52,6 +52,17 @@ class BlueAcorn_UniversalAnalytics_Model_Monitor {
         }
     }
 
+    public function generateCurrencyInit() {
+        $currencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
+        $allowedCodes = $this->helper->getAllowedCurrencyCodes();
+
+        if ( !array_key_exists($currencyCode, $allowedCodes) ) {
+            $currencyCode = 'USD';
+        }
+
+        return $this->JS->generateGoogleJS('set', '&cu', $currencyCode);
+    }
+
     /**
      * Add generate an array of transaction data
      *

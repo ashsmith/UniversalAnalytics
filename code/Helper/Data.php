@@ -48,6 +48,12 @@ class BlueAcorn_UniversalAnalytics_Helper_Data extends Mage_Core_Helper_Abstract
         return $listName;
     }
 
+    public function generateCurrencyInit() {
+        $monitor = Mage::getSingleton('baua/monitor');
+
+        return $monitor->generateCurrencyInit();
+    }
+
     /**
      * Get translation values from Config Defaults
      * @param $part
@@ -56,6 +62,10 @@ class BlueAcorn_UniversalAnalytics_Helper_Data extends Mage_Core_Helper_Abstract
     public function getTranslation($part)
     {
         return Mage::getStoreConfig('baua/translation/'.$part);
+    }
+
+    public function getAllowedCurrencyCodes() {
+        return Mage::getStoreConfig('baua/allowed_currency_codes');
     }
 
     /**
