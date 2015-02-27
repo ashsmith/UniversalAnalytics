@@ -1,0 +1,13 @@
+{
+    "name": "blueacorn/universalanalytics",
+    "description": "A Magento module that implements Univeral Analytics Ecommerce tracking",
+    "homepage": "https://github.com/BlueAcornInc/UniversalAnalytics",
+    "license": "tobedefined",
+    "type": "magento-module",
+    "authors": [
+        {
+        	"name": "tobedefined",
+        	"email": "tobedefined"
+        }
+    ]
+}
