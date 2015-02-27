@@ -1,6 +1,8 @@
 {
     "name": "blueacorn/universalanalytics",
     "description": "A Magento module that implements Univeral Analytics Ecommerce tracking",
+    "keywords": ["magento", "analytics", "google"],
+    "type": "magento-module",
     "homepage": "http://github.com/BlueAcornInc/UniversalAnalytics",
     "license": "GNU General Public License (GPL)",
     "type": "magento-module",
