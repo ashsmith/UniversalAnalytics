@@ -2,18 +2,18 @@
 
 class BlueAcorn_UniversalAnalytics_Model_Monitor {
 
-    private $productImpressionList = Array();
-    private $promoImpressionList   = Array();
+    protected $productImpressionList = Array();
+    protected $promoImpressionList   = Array();
 
-    private $quoteList = Array();
+    protected $quoteList = Array();
 
-    private $productAttributeValueList = Array();
+    protected $productAttributeValueList = Array();
 
-    private $exclusionList = Array();
+    protected $exclusionList = Array();
 
-    private $action = null;
+    protected $action = null;
 
-    private $helper;
+    protected $helper;
 
     /**
      * Constructor, sets up a shortcut variable for the main helper
