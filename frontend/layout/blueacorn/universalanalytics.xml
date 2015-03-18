@@ -28,11 +28,7 @@
     <checkout_onepage_index>
         <reference name="before_body_end" before="-">
             <block type="core/template" name="universalanalytics_checkout" as="universalanalytics_checkout"
-                template="blueacorn/universalanalytics/onestepcheckout.phtml">
-		<action method="setCacheLifetime">
-		    <time>null</time>
-		</action>
-	    </block>
+                template="blueacorn/universalanalytics/onestepcheckout.phtml" />
         </reference>
     </checkout_onepage_index>
     <checkout_onepage_success>
