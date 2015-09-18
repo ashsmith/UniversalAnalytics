@@ -20,7 +20,7 @@ class BlueAcorn_UniversalAnalytics_Model_Js {
     }
 
     /**
-     * Generate a forEach loop that calls an anonymous function
+     * Generate a each loop that calls an anonymous function
      * containing $content
      *
      * @name each
@@ -28,7 +28,7 @@ class BlueAcorn_UniversalAnalytics_Model_Js {
      * @return string
      */
     public function each($content) {
-        $text = '.forEach( ';
+        $text = '.each( ';
         $text .= $this->anonFunc('element, index, array', $content);
         $text .= ');';
 
